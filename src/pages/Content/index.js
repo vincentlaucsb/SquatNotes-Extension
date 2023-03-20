@@ -12,17 +12,18 @@ class Sidebar extends Component {
         super(props);
 
         this.state = {
-            notes: [
-                {
-                    note: "ASDF",
-                    time: 10.1
-                },
-                {
-                    note: "TEST ASDF",
-                    time: 20
-                }
-            ]
+            currentTime: NaN,
+            notebooks: null,
+            notes: []
         };
+    }
+
+    componentDidMount() {
+        chrome.runtime.sendMessage({
+            contentScriptQuery: "getNotebooks"
+        }).then((notebooks) => {
+            this.setState({ notebooks });
+        });
     }
 
     deleteNote(time) {
@@ -35,8 +36,6 @@ class Sidebar extends Component {
         const notes = this.state.notes.map(({ time, note }) => {
             return { time, note };
         });
-
-        console.log("Saving Notes", window.location.href, notes);
 
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
@@ -55,8 +54,7 @@ class Sidebar extends Component {
                     );
                 })}
                 <Form addNote={(note) => {
-                    const currentTime = document.getElementsByTagName("video")[0].currentTime;
-                    const notes = [...this.state.notes, { note, time: currentTime }];
+                    const notes = [...this.state.notes, { note, time: this.state.currentTime }];
                     notes.sort((a, b) => {
                         if (a.time > b.time) {
                             return 1;
@@ -66,9 +64,25 @@ class Sidebar extends Component {
                         }
                     });
 
-                    this.setState({ notes });
-                }} />
+                    this.setState({
+                        currentTime: NaN,
+                        notes
+                    });
+                }}
+                    currentTime={this.state.currentTime}
+                    startTakingNotes={() => {
+                        this.setState({
+                            currentTime: document.getElementsByTagName("video")[0].currentTime
+                        });
+                    }}
+                />
                 <div style={{ marginTop: "2rem" }}>
+                    <select name="notebook">
+                        <option value="">Select a notebook</option>
+                        {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ name }) => {
+                            return (<option value={name}>{name}</option>);
+                        }) : null}
+                    </select>
                     <button onClick={() => this.saveNotes()}>Save</button>
                 </div>
             </div>
@@ -77,7 +91,6 @@ class Sidebar extends Component {
 }
 
 const STATE = {
-    isAddingNote: false,
     isVisible: false
 };
 
@@ -97,45 +110,14 @@ const CONTAINER_STYLES = [
     "font-size: 12pt"
 ];
 
-const GLOBAL_CSS = `
-    #squatnotes .note {
-        margin: 1rem 0;
-    }
-
-    #squatnotes .note-header {
-        display: flex;
-    }
-
-    #squatnotes .delete-button {
-        margin-left: auto;
-    }
-
-    #squatnotes .save-button {
-        margin-top: 1rem;
-    }
-`;
-
 function getContainerStyles(isVisible) {
     return [isVisible ? "display: block" : "display: none", ...CONTAINER_STYLES].join("; ");
-}
-
-function formatTime(time) {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    const secondsTxt = seconds < 10 ? `0${seconds}` : seconds;
-
-    return `${minutes}:${secondsTxt}`;
 }
 
 (function () {
     'use strict';
 
     const body = document.body;
-    const head = document.head;
-
-    let styles = document.createElement("style");
-    styles.innerHTML = GLOBAL_CSS;
-    head.appendChild(styles);
 
     let toInsert = document.createElement("div");
     toInsert.setAttribute("id", "squatnotes");

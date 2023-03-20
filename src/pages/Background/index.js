@@ -3,23 +3,35 @@ console.log('Put the background scripts here.');
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        if (request.contentScriptQuery == "saveNotes") {
-            const requestUrl = `http://localhost:10000/folders/test/videos?youtube=${encodeURIComponent(request.videoURL)}`;
+        let requestUrl = "";
 
-            console.log("Received request!", request.notes);
+        switch (request.contentScriptQuery) {
+            case "getNotebooks":
+                requestUrl = `http://localhost:10000/`;
 
-            fetch(requestUrl, {
-                method: "POST",
-                body: request.notes,
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => response.text())
-                .then(price => sendResponse(price));
+                fetch(requestUrl)
+                    .then(response => response.json())
+                    .then(data => sendResponse(data['folders']));
 
-            return true; // Will respond asynchronously.
+            case "saveNotes":
+                requestUrl = `http://localhost:10000/folders/test/videos?youtube=${encodeURIComponent(request.videoURL)}`;
+
+                fetch(requestUrl, {
+                    method: "POST",
+                    body: request.notes,
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then(response => response.text())
+                    .then(price => sendResponse(price));
+
+            default:
+                break;
         }
+
+        // Will respond asynchronously.
+        return true;
     }
 );
 
