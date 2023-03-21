@@ -13,6 +13,7 @@ class Sidebar extends Component {
 
         this.state = {
             currentTime: NaN,
+            isSavingNote: false,
             notebooks: null,
             notes: [],
             selectedNotebook: null
@@ -34,11 +35,11 @@ class Sidebar extends Component {
     }
 
     saveNotes() {
+        this.setState({ isSavingNote: true });
+
         const notes = this.state.notes.map(({ time, note }) => {
             return { time, note };
         });
-
-        console.log("Saving Notes", this.state);
 
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
@@ -49,6 +50,15 @@ class Sidebar extends Component {
     }
 
     render() {
+        if (this.state.isSavingNote) {
+            return (
+                <div>
+                    <h1>Notes</h1>
+                    <p>Saving...</p>
+                </div>
+            )
+        }
+
         return (
             <div>
                 <h1>Notes</h1>
@@ -78,6 +88,9 @@ class Sidebar extends Component {
                         this.setState({
                             currentTime: document.getElementsByTagName("video")[0].currentTime
                         });
+                    }}
+                    stopTakingNotes={() => {
+                        this.setState({ currentTime: null });
                     }}
                 />
                 <div style={{ marginTop: "2rem" }}>

@@ -23,8 +23,8 @@ chrome.runtime.onMessage.addListener(
                         "Content-Type": "application/json"
                     }
                 })
-                    .then(response => response.text())
-                    .then(price => sendResponse(price));
+                    .then(response => response.json())
+                    .then(data => sendResponse(data));
 
             default:
                 break;
