@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener(
                     .then(data => sendResponse(data['folders']));
 
             case "saveNotes":
-                requestUrl = `http://localhost:10000/folders/test/videos?youtube=${encodeURIComponent(request.videoURL)}`;
+                requestUrl = `http://localhost:10000/folders/${request.notebook}/videos?youtube=${encodeURIComponent(request.videoURL)}`;
 
                 fetch(requestUrl, {
                     method: "POST",

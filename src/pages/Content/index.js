@@ -14,7 +14,8 @@ class Sidebar extends Component {
         this.state = {
             currentTime: NaN,
             notebooks: null,
-            notes: []
+            notes: [],
+            selectedNotebook: null
         };
     }
 
@@ -37,9 +38,12 @@ class Sidebar extends Component {
             return { time, note };
         });
 
+        console.log("Saving Notes", this.state);
+
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
             notes: JSON.stringify({ notes: notes }),
+            notebook: this.state.selectedNotebook,
             videoURL: window.location.href
         });
     }
@@ -77,10 +81,14 @@ class Sidebar extends Component {
                     }}
                 />
                 <div style={{ marginTop: "2rem" }}>
-                    <select name="notebook">
+                    <select name="notebook" value={this.state.selectedNotebook} onChange={(e) => {
+                        this.setState({
+                            selectedNotebook: e.currentTarget.value
+                        });
+                    }}>
                         <option value="">Select a notebook</option>
-                        {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ name }) => {
-                            return (<option value={name}>{name}</option>);
+                        {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ id, name }) => {
+                            return (<option value={id}>{name}</option>);
                         }) : null}
                     </select>
                     <button onClick={() => this.saveNotes()}>Save</button>
