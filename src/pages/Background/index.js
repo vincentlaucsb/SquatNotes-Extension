@@ -34,5 +34,3 @@ chrome.runtime.onMessage.addListener(
         return true;
     }
 );
-
-console.log("Added onMessage listener", chrome.runtime);

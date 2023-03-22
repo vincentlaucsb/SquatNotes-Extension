@@ -14,6 +14,7 @@ class Sidebar extends Component {
         this.state = {
             currentTime: NaN,
             isSavingNote: false,
+            isVisible: false,
             notebooks: null,
             notes: [],
             selectedNotebook: null
@@ -21,6 +22,17 @@ class Sidebar extends Component {
     }
 
     componentDidMount() {
+        document.body.addEventListener("keydown", (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                this.setState({
+                    isVisible: !this.state.isVisible
+                });
+
+                e.preventDefault();
+            }
+        });
+
+        // Load notebooks
         chrome.runtime.sendMessage({
             contentScriptQuery: "getNotebooks"
         }).then((notebooks) => {
@@ -60,7 +72,9 @@ class Sidebar extends Component {
         }
 
         return (
-            <div>
+            <div id="squatnotes" style={{
+                display: this.state.isVisible ? "block" : "none"
+            }}>
                 <h1>Notes</h1>
                 {this.state.notes.map(({ note, time }) => {
                     return (
@@ -104,35 +118,11 @@ class Sidebar extends Component {
                             return (<option value={id}>{name}</option>);
                         }) : null}
                     </select>
-                    <button onClick={() => this.saveNotes()}>Save</button>
+                    <button class="save-note" onClick={() => this.saveNotes()}>Save</button>
                 </div>
             </div>
         );
     }
-}
-
-const STATE = {
-    isVisible: false
-};
-
-const CONTAINER_STYLES = [
-    "width: 400px",
-    "height: 100vh",
-    "position: fixed",
-    "top: 0",
-    "right: 0",
-
-    "background: #ffffff",
-    "z-index: 9999",
-    "padding: 1rem",
-
-    "border-left: 1px solid #000000",
-
-    "font-size: 12pt"
-];
-
-function getContainerStyles(isVisible) {
-    return [isVisible ? "display: block" : "display: none", ...CONTAINER_STYLES].join("; ");
 }
 
 (function () {
@@ -141,17 +131,7 @@ function getContainerStyles(isVisible) {
     const body = document.body;
 
     let toInsert = document.createElement("div");
-    toInsert.setAttribute("id", "squatnotes");
-    toInsert.setAttribute("style", getContainerStyles());
     body.appendChild(toInsert);
 
     ReactDOM.render(<Sidebar />, toInsert);
-
-    body.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.key === 's') {
-            STATE.isVisible = !STATE.isVisible;
-            toInsert.setAttribute("style", getContainerStyles(STATE.isVisible));
-            e.preventDefault();
-        }
-    });
 })();
