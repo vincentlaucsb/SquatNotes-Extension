@@ -16,6 +16,15 @@ chrome.runtime.onMessage.addListener(
 
                 break;
 
+            case "getProgress":
+                requestUrl = request.url;
+
+                fetch(requestUrl)
+                    .then(response => response.json())
+                    .then(data => sendResponse(data));
+
+                break;
+
             case "saveNotes":
                 requestUrl = `http://localhost:10000/folders/${request.notebook}/videos?youtube=${encodeURIComponent(request.videoURL)}`;
 

@@ -15,6 +15,7 @@ class Sidebar extends Component {
             currentTime: NaN,
             isSavingNote: false,
             isVisible: false,
+            messages: [],
             notebooks: [],
             notes: [],
             selectedNotebook: null
@@ -64,9 +65,16 @@ class Sidebar extends Component {
     render() {
         if (this.state.isSavingNote) {
             return (
-                <div>
+                <div id="squatnotes" style={{
+                    display: this.state.isVisible ? "block" : "none"
+                }}>
                     <h1>Notes</h1>
                     <p>Saving...</p>
+                    {this.state.messages.map((msg) => {
+                        return (
+                            <p>{msg.message}</p>
+                        );
+                    })}
                 </div>
             )
         }
@@ -122,7 +130,14 @@ class Sidebar extends Component {
                                 }) : null}
                             </select>
                             <button
-                                class="save-note" onClick={() => this.saveNotes()}
+                                class="save-note" onClick={() => {
+                                    this.saveNotes().then((response) => {
+                                        return response.links.find(link => link.rel === "self");
+                                    }).then((progressLink) => {
+                                        console.log("Progress link", progressLink);
+                                        this.updateProgress(progressLink);
+                                    });
+                                }}
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
                                 style={{ marginLeft: "var(--spacing-2)" }}
                             >Save
@@ -133,6 +148,22 @@ class Sidebar extends Component {
                 </div>
             </div>
         );
+    }
+
+    updateProgress(progressLink) {
+        chrome.runtime.sendMessage({
+            contentScriptQuery: "getProgress",
+            url: progressLink.href
+        }).then((data) => {
+            this.setState({ messages: [...this.state.messages, ...data.messages] })
+            let progress = data.progress;
+
+            if (progress < 100) {
+                setTimeout(() => {
+                    this.updateProgress(progressLink);
+                }, 500);
+            }
+        });
     }
 }
 
