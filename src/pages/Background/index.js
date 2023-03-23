@@ -11,7 +11,10 @@ chrome.runtime.onMessage.addListener(
 
                 fetch(requestUrl)
                     .then(response => response.json())
-                    .then(data => sendResponse(data['folders']));
+                    .then(data => sendResponse(data['folders']))
+                    .catch(() => sendResponse(null));
+
+                break;
 
             case "saveNotes":
                 requestUrl = `http://localhost:10000/folders/${request.notebook}/videos?youtube=${encodeURIComponent(request.videoURL)}`;
@@ -25,6 +28,8 @@ chrome.runtime.onMessage.addListener(
                 })
                     .then(response => response.json())
                     .then(data => sendResponse(data));
+
+                break;
 
             default:
                 break;

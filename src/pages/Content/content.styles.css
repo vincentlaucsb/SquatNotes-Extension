@@ -1,4 +1,13 @@
 #squatnotes {
+    --spacing-0: 0;
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 1rem;
+    --spacing-4: 2rem;
+    --spacing-5: 4rem;
+    --spacing-6: 8rem;
+    --spacing-7: 16rem;
+
     width: 400px;
     height: 100vh;
     position: fixed;
@@ -6,6 +15,7 @@
     right: 0;
 
     background: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
     z-index: 9999;
     padding: 1.5rem;
     border-left: 1px solid #000000;

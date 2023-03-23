@@ -15,7 +15,7 @@ class Sidebar extends Component {
             currentTime: NaN,
             isSavingNote: false,
             isVisible: false,
-            notebooks: null,
+            notebooks: [],
             notes: [],
             selectedNotebook: null
         };
@@ -108,17 +108,28 @@ class Sidebar extends Component {
                     }}
                 />
                 <div style={{ marginTop: "2rem" }}>
-                    <select name="notebook" value={this.state.selectedNotebook} onChange={(e) => {
-                        this.setState({
-                            selectedNotebook: e.currentTarget.value
-                        });
-                    }}>
-                        <option value="">Select a notebook</option>
-                        {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ id, name }) => {
-                            return (<option value={id}>{name}</option>);
-                        }) : null}
-                    </select>
-                    <button class="save-note" onClick={() => this.saveNotes()}>Save</button>
+                    <h2>Save Note</h2>
+                    {this.state.notebooks != null ? (
+                        <>
+                            <select name="notebook" value={this.state.selectedNotebook} onChange={(e) => {
+                                this.setState({
+                                    selectedNotebook: e.currentTarget.value
+                                });
+                            }}>
+                                <option value="">Select a notebook</option>
+                                {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ id, name }) => {
+                                    return (<option value={id}>{name}</option>);
+                                }) : null}
+                            </select>
+                            <button
+                                class="save-note" onClick={() => this.saveNotes()}
+                                disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
+                                style={{ marginLeft: "var(--spacing-2)" }}
+                            >Save
+                            </button>
+                        </>) : (
+                        <p>It appears SquatNotes is not running. Please launch SquatNotes and reload this page.</p>
+                    )}
                 </div>
             </div>
         );

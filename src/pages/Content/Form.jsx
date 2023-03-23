@@ -16,8 +16,11 @@ export function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }
             <div>
                 <h2>Add a Note: {formatTime(currentTime)}</h2>
                 <textarea onChange={(e) => setValue(e.target.value)} value={value} style={{ width: "100%" }}></textarea>
-                <button onClick={onAddNote}>Add Note</button>
-                <button onClick={stopTakingNotes}>Cancel</button>
+                <button onClick={onAddNote} disabled={!value}>Add Note</button>
+                <button
+                    onClick={stopTakingNotes}
+                    style={{ marginLeft: "var(--spacing-2)" }}
+                >Cancel</button>
             </div>
             :
             <div>

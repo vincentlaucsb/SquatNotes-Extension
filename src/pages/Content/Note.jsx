@@ -8,7 +8,7 @@ export function Note({ onDelete, time, note }) {
                 {formatTime(time)}
 
                 <div class="note-controls">
-                    <button onClick={onDelete}>[delete]</button>
+                    <button onClick={onDelete}>Delete</button>
                 </div>
             </div>
             <span>{note}</span>
