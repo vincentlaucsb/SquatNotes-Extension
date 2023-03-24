@@ -66,15 +66,19 @@ class Sidebar extends Component {
         if (this.state.isSavingNote) {
             return (
                 <div id="squatnotes" style={{
-                    display: this.state.isVisible ? "block" : "none"
+                    display: this.state.isVisible ? "flex" : "none"
                 }}>
                     <h1>Notes</h1>
                     <p>Saving...</p>
-                    {this.state.messages.map((msg) => {
-                        return (
-                            <p>{msg.message}</p>
-                        );
-                    })}
+
+                    <h2 style={{ marginTop: "var(--spacing-2)" }}>Progress</h2>
+                    <pre style={{ overflow: "auto" }}>
+                        {this.state.messages.map((msg) => {
+                            return (
+                                <>{msg.message}<br /></>
+                            );
+                        })}
+                    </pre>
                 </div>
             )
         }
