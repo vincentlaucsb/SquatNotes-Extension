@@ -1,13 +1,24 @@
 console.log('This is the background page.');
 console.log('Put the background scripts here.');
 
+const BACKEND_URL = "http://localhost:10000/";
+
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         let requestUrl = "";
 
         switch (request.contentScriptQuery) {
+            case "getFrontendPort":
+                requestUrl = `${BACKEND_URL}frontendPort`;
+
+                fetch(requestUrl)
+                    .then(response => response.json())
+                    .then(data => sendResponse(data));
+
+                break;
+
             case "getNotebooks":
-                requestUrl = `http://localhost:10000/`;
+                requestUrl = BACKEND_URL;
 
                 fetch(requestUrl)
                     .then(response => response.json())
@@ -26,7 +37,7 @@ chrome.runtime.onMessage.addListener(
                 break;
 
             case "saveNotes":
-                requestUrl = `http://localhost:10000/folders/${request.notebook}/videos?youtube=${encodeURIComponent(request.videoURL)}`;
+                requestUrl = `${BACKEND_URL}folders/${request.notebook}/videos?youtube=${encodeURIComponent(request.videoURL)}`;
 
                 fetch(requestUrl, {
                     method: "POST",

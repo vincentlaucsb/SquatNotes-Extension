@@ -4,19 +4,16 @@ import { createRoot } from 'react-dom/client';
 import { Note } from './Note';
 import { Form } from './Form';
 
-console.log('Content script works!');
-console.log('Must reload extension for modifications to take effect.');
-
 class Sidebar extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             currentTime: NaN,
+            finishedVideoId: null,
             isSavingNote: false,
             isVisible: false,
             messages: [],
-            notebooks: [],
             notes: [],
             selectedNotebook: null
         };
@@ -31,16 +28,6 @@ class Sidebar extends Component {
 
                 e.preventDefault();
             }
-        });
-
-        // Load notebooks
-        console.log("Getting notebooks");
-
-        chrome.runtime.sendMessage({
-            contentScriptQuery: "getNotebooks"
-        }).then((notebooks) => {
-            console.log("Notebooks");
-            this.setState({ notebooks });
         });
     }
 
@@ -82,6 +69,10 @@ class Sidebar extends Component {
                             );
                         })}
                     </pre>
+
+                    {this.state.finishedVideoId
+                        ? <a href={`http://localhost:${this.props.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>See Note</a>
+                        : null}
                 </div>
             )
         }
@@ -91,11 +82,12 @@ class Sidebar extends Component {
                 display: this.state.isVisible ? "block" : "none"
             }}>
                 <h1>Notes</h1>
-                {this.state.notes.map(({ note, time }) => {
+                {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
                     return (
                         <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
                     );
-                })}
+                }) : <p>There are no notes on this video. Once you take a note, it will break
+                    displayed here.</p>}
                 <Form addNote={(note) => {
                     const notes = [...this.state.notes, { note, time: this.state.currentTime }];
                     notes.sort((a, b) => {
@@ -124,7 +116,7 @@ class Sidebar extends Component {
                 />
                 <div style={{ marginTop: "2rem" }}>
                     <h2>Save Note</h2>
-                    {this.state.notebooks != null ? (
+                    {this.props.notebooks != null ? (
                         <>
                             <select name="notebook" value={this.state.selectedNotebook} onChange={(e) => {
                                 this.setState({
@@ -132,7 +124,7 @@ class Sidebar extends Component {
                                 });
                             }}>
                                 <option value="">Select a notebook</option>
-                                {Array.isArray(this.state.notebooks) ? this.state.notebooks.map(({ id, name }) => {
+                                {Array.isArray(this.props.notebooks) ? this.props.notebooks.map(({ id, name }) => {
                                     return (<option value={id}>{name}</option>);
                                 }) : null}
                             </select>
@@ -141,7 +133,6 @@ class Sidebar extends Component {
                                     this.saveNotes().then((response) => {
                                         return response.links.find(link => link.rel === "self");
                                     }).then((progressLink) => {
-                                        console.log("Progress link", progressLink);
                                         this.updateProgress(progressLink);
                                     });
                                 }}
@@ -163,19 +154,28 @@ class Sidebar extends Component {
             url: progressLink.href
         }).then((data) => {
             this.setState({ messages: [...this.state.messages, ...data.messages] })
-            let progress = data.progress;
-            console.log(data);
 
-            if (progress < 100) {
+            if (!data.videoId) {
                 setTimeout(() => {
                     this.updateProgress(progressLink);
                 }, 500);
             }
+            else {
+                this.setState({ finishedVideoId: data.videoId });
+            }
         });
     }
 }
-(function () {
+(async function () {
     'use strict';
+
+    const frontendPort = await chrome.runtime.sendMessage({
+        contentScriptQuery: "getFrontendPort"
+    });
+
+    const notebooks = await chrome.runtime.sendMessage({
+        contentScriptQuery: "getNotebooks"
+    });
 
     const body = document.body;
 
@@ -183,7 +183,7 @@ class Sidebar extends Component {
     body.appendChild(reactContainer);
 
     let root = createRoot(reactContainer);
-    root.render(<Sidebar />);
+    root.render(<Sidebar {... { frontendPort, notebooks }} />);
 
 
     let currentUrl = window.location.href;
@@ -192,8 +192,7 @@ class Sidebar extends Component {
             currentUrl = window.location.href;
             root.unmount();
             root = createRoot(reactContainer);
-            root.render(<Sidebar />);
+            root.render(<Sidebar {... { frontendPort, notebooks }} />);
         }
     }, 1000);
-
 })();
