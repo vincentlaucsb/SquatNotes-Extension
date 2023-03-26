@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { Note } from './Note';
 import { Form } from './Form';
@@ -34,9 +34,12 @@ class Sidebar extends Component {
         });
 
         // Load notebooks
+        console.log("Getting notebooks");
+
         chrome.runtime.sendMessage({
             contentScriptQuery: "getNotebooks"
         }).then((notebooks) => {
+            console.log("Notebooks");
             this.setState({ notebooks });
         });
     }
@@ -161,6 +164,7 @@ class Sidebar extends Component {
         }).then((data) => {
             this.setState({ messages: [...this.state.messages, ...data.messages] })
             let progress = data.progress;
+            console.log(data);
 
             if (progress < 100) {
                 setTimeout(() => {
@@ -170,14 +174,26 @@ class Sidebar extends Component {
         });
     }
 }
-
 (function () {
     'use strict';
 
     const body = document.body;
 
-    let toInsert = document.createElement("div");
-    body.appendChild(toInsert);
+    const reactContainer = document.createElement("div");
+    body.appendChild(reactContainer);
 
-    ReactDOM.render(<Sidebar />, toInsert);
+    let root = createRoot(reactContainer);
+    root.render(<Sidebar />);
+
+
+    let currentUrl = window.location.href;
+    setInterval(() => {
+        if (currentUrl !== window.location.href) {
+            currentUrl = window.location.href;
+            root.unmount();
+            root = createRoot(reactContainer);
+            root.render(<Sidebar />);
+        }
+    }, 1000);
+
 })();
