@@ -1,12 +1,18 @@
 #squatnotes {
+    --root-font-size: 12pt;
     --spacing-0: 0;
-    --spacing-1: 0.25rem;
-    --spacing-2: 0.5rem;
-    --spacing-3: 1rem;
-    --spacing-4: 2rem;
-    --spacing-5: 4rem;
-    --spacing-6: 8rem;
-    --spacing-7: 16rem;
+    --spacing-1: calc(0.25 * var(--root-font-size));
+    --spacing-2: calc(0.5 * var(--root-font-size));
+    --spacing-3: var(--root-font-size);
+    --spacing-4: calc(2 * var(--root-font-size));
+    --spacing-5: calc(4 * var(--root-font-size));
+    --spacing-6: calc(8 * var(--root-font-size));
+    --spacing-7: calc(16 * var(--root-font-size));
+
+    --primary: #0388F5;
+    --primary-hue: 207.0247933884deg;
+    --primary-saturation: 97.5806451613%;
+    --primary-lightness: 48.6274509804%;
 
     width: 400px;
     height: 100vh;
@@ -19,15 +25,40 @@
     background: #ffffff;
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
     z-index: 9999;
-    padding: 1.5rem;
+    padding: var(--spacing-3);
     border-left: 1px solid #000000;
-    font-size: 12pt;
+    font-size: var(--root-font-size);
+}
+
+#squatnotes * {
+    box-sizing: border-box;
+}
+
+#squatnotes h1,
+#squatnotes h2,
+#squatnotes h3,
+#squatnotes h4,
+#squatnotes h5,
+#squatnotes h6 {
+    font-weight: 500;
 }
 
 #squatnotes button,
 #squatnotes select {
     font-size: inherit;
     padding: 0.25rem 0.375rem;
+}
+
+#squatnotes button {
+    background: var(--primary);
+    border: 0;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: var(--spacing-1) var(--spacing-3);
+}
+
+#squatnotes textarea {
+    padding: var(--spacing-2);
 }
 
 #squatnotes .note {
@@ -52,4 +83,16 @@
 
 .note-controls {
     margin-left: auto;
+}
+
+#save-note {
+    margin-top: var(--spacing-4);
+}
+
+#notebook-picker {
+    display: flex;
+}
+
+#add-note {
+    margin-top: var(--spacing-3);
 }

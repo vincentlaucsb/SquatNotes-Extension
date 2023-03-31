@@ -86,7 +86,7 @@ class Sidebar extends Component {
                     return (
                         <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
                     );
-                }) : <p>There are no notes on this video. Once you take a note, it will break
+                }) : <p>There are no notes on this video. Once you take a note, it will be
                     displayed here.</p>}
                 <Form addNote={(note) => {
                     const notes = [...this.state.notes, { note, time: this.state.currentTime }];
@@ -114,10 +114,10 @@ class Sidebar extends Component {
                         this.setState({ currentTime: null });
                     }}
                 />
-                <div style={{ marginTop: "2rem" }}>
+                <div id="save-note">
                     <h2>Save Note</h2>
                     {this.props.notebooks != null ? (
-                        <>
+                        <div id="notebook-picker">
                             <select name="notebook" value={this.state.selectedNotebook} onChange={(e) => {
                                 this.setState({
                                     selectedNotebook: e.currentTarget.value
@@ -128,19 +128,18 @@ class Sidebar extends Component {
                                     return (<option value={id}>{name}</option>);
                                 }) : null}
                             </select>
-                            <button
-                                class="save-note" onClick={() => {
-                                    this.saveNotes().then((response) => {
-                                        return response.links.find(link => link.rel === "self");
-                                    }).then((progressLink) => {
-                                        this.updateProgress(progressLink);
-                                    });
-                                }}
+                            <button class="save-note" onClick={() => {
+                                this.saveNotes().then((response) => {
+                                    return response.links.find(link => link.rel === "self");
+                                }).then((progressLink) => {
+                                    this.updateProgress(progressLink);
+                                });
+                            }}
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
                                 style={{ marginLeft: "var(--spacing-2)" }}
                             >Save
                             </button>
-                        </>) : (
+                        </div>) : (
                         <p>It appears SquatNotes is not running. Please launch SquatNotes and reload this page.</p>
                     )}
                 </div>
