@@ -53,12 +53,24 @@ class Sidebar extends Component {
     }
 
     render() {
+        return (
+            <div id="squatnotes" style={{
+                display: this.state.isVisible ? "block" : "none"
+            }}>
+                <h1>Notes</h1>
+                {this.renderPanelContents()}
+            </div>
+        );
+    }
+
+    renderPanelContents() {
+        if (this.state.finishedVideoId) {
+            return <a href={`http://localhost:${this.props.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>Note saved</a>
+        }
+
         if (this.state.isSavingNote) {
             return (
-                <div id="squatnotes" style={{
-                    display: this.state.isVisible ? "flex" : "none"
-                }}>
-                    <h1>Notes</h1>
+                <>
                     <p>Saving...</p>
 
                     <h2 style={{ marginTop: "var(--spacing-2)" }}>Progress</h2>
@@ -69,24 +81,17 @@ class Sidebar extends Component {
                             );
                         })}
                     </pre>
-
-                    {this.state.finishedVideoId
-                        ? <a href={`http://localhost:${this.props.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>See Note</a>
-                        : null}
-                </div>
-            )
+                </>
+            );
         }
 
         return (
-            <div id="squatnotes" style={{
-                display: this.state.isVisible ? "block" : "none"
-            }}>
-                <h1>Notes</h1>
+            <>
                 {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
                     return (
                         <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
                     );
-                }) : <p>There are no notes on this video. Once you take a note, it will be
+                }) : <p>There are no notes on this video. Once you start taking notes, they will be
                     displayed here.</p>}
                 <Form addNote={(note) => {
                     const notes = [...this.state.notes, { note, time: this.state.currentTime }];
@@ -143,7 +148,7 @@ class Sidebar extends Component {
                         <p>It appears SquatNotes is not running. Please launch SquatNotes and reload this page.</p>
                     )}
                 </div>
-            </div>
+            </>
         );
     }
 
