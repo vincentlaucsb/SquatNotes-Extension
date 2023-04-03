@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { formatTime } from './util';
 
 export function Note({ onDelete, time, note }) {

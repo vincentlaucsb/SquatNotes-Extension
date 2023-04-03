@@ -28,6 +28,19 @@ class Sidebar extends Component {
 
                 e.preventDefault();
             }
+
+            if (this.state.isVisible) {
+                if (e.ctrlKey && e.key === ' ') {
+                    this.setState({
+                        currentTime: document.getElementsByTagName("video")[0].currentTime
+                    });
+                }
+                else if (e.key === 'Escape') {
+                    this.setState({
+                        currentTime: null
+                    });
+                }
+            }
         });
     }
 
