@@ -26,6 +26,7 @@ export function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }
                         <textarea
                             onChange={(e) => setValue(e.target.value)}
                             onKeyDown={textareaKeyDownHandler}
+                            autoFocus={true}
                             value={value} style={{ width: "100%" }}
                         />
                         <button onClick={onAddNote} disabled={!value}>

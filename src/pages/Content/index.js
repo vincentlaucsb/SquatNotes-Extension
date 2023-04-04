@@ -68,7 +68,7 @@ class Sidebar extends Component {
     render() {
         return (
             <div id="squatnotes" style={{
-                display: this.state.isVisible ? "block" : "none"
+                display: this.state.isVisible ? "flex" : "none"
             }}>
                 <h1>Notes</h1>
                 {this.renderPanelContents()}
@@ -100,14 +100,22 @@ class Sidebar extends Component {
 
         return (
             <>
-                {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
-                    return (
-                        <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
-                    );
-                }) : <p>There are no notes on this video. Once you start taking notes, they will be
-                    displayed here.</p>}
+                <div style={{ overflowY: "auto", paddingRight: "var(--spacing-2)" }}>
+                    {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
+                        return (
+                            <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
+                        );
+                    }) : <p>There are no notes on this video. Once you start taking notes, they will be
+                        displayed here.</p>}
+                </div>
                 <Form addNote={(note) => {
-                    const notes = [...this.state.notes, { note, time: this.state.currentTime }];
+                    const notes = [
+                        // prevent notes with duplicate timestamps
+                        ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
+
+                        // add current note
+                        { note, time: this.state.currentTime }
+                    ];
                     notes.sort((a, b) => {
                         if (a.time > b.time) {
                             return 1;
