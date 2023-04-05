@@ -1,6 +1,3 @@
-console.log('This is the background page.');
-console.log('Put the background scripts here.');
-
 const BACKEND_URL = "http://localhost:10000/";
 
 chrome.runtime.onMessage.addListener(
@@ -13,7 +10,8 @@ chrome.runtime.onMessage.addListener(
 
                 fetch(requestUrl)
                     .then(response => response.json())
-                    .then(data => sendResponse(data));
+                    .then(data => sendResponse(data))
+                    .catch(() => sendResponse(null));
 
                 break;
 
