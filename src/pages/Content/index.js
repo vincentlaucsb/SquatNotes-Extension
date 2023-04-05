@@ -163,7 +163,9 @@ class Sidebar extends Component {
                             }}
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
                                 style={{ marginLeft: "var(--spacing-2)" }}
-                            >Save
+                            >
+                                <img class="button-icon" src={chrome.runtime.getURL("device-floppy.png")} alt="Save Note" />
+                                Save
                             </button>
                         </div>) : (
                         <p>It appears SquatNotes is not running. Please launch SquatNotes and reload this page.</p>

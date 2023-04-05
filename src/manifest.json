@@ -37,10 +37,15 @@
     {
       "resources": [
         "content.styles.css",
+        "device-floppy.png",
+        "notes.png",
+        "trash.png",
         "icon-128.png",
         "icon-34.png"
       ],
-      "matches": []
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

@@ -57,7 +57,14 @@
     border-radius: 4px;
     color: #ffffff;
     cursor: pointer;
+    display: flex;
     padding: var(--spacing-1) var(--spacing-3);
+}
+
+#squatnotes .button-icon {
+    height: var(--root-font-size);
+    filter: invert(1);
+    margin-right: var(--spacing-1);
 }
 
 #squatnotes textarea {
@@ -70,6 +77,10 @@
 
 #squatnotes .note-header {
     display: flex;
+}
+
+#squatnotes #current-time {
+    font-weight: normal;
 }
 
 #squatnotes .delete-button {
