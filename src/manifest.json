@@ -16,7 +16,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://*.youtube.com/*"
+        "https://*.youtube.com/*",
+        "https://*.rumble.com/*"
       ],
       "js": [
         "contentScript.bundle.js"
@@ -29,10 +30,14 @@
   "devtools_page": "devtools.html",
   "externally_connectable": {
     "matches": [
-      "https://*.youtube.com/*"
+      "https://*.youtube.com/*",
+      "https://*.rumble.com/*"
     ],
     "accepts_tls_channel_id": false
   },
+  "permissions": [
+    "storage"
+  ],
   "web_accessible_resources": [
     {
       "resources": [

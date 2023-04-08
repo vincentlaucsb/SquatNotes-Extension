@@ -19,6 +19,15 @@ class Sidebar extends Component {
         };
     }
 
+    get currentVideo() {
+        let ret = document.getElementsByTagName("video")[0];
+
+        if (ret?.getAttribute("src"))
+            return ret;
+
+        return null;
+    }
+
     componentDidMount() {
         document.body.addEventListener("keydown", (e) => {
             if (e.ctrlKey && e.key === 's') {
@@ -32,7 +41,7 @@ class Sidebar extends Component {
             if (this.state.isVisible) {
                 if (e.ctrlKey && e.key === ' ') {
                     this.setState({
-                        currentTime: document.getElementsByTagName("video")[0].currentTime
+                        currentTime: this.currentVideo.currentTime
                     });
                 }
                 else if (e.key === 'Escape') {
@@ -77,6 +86,10 @@ class Sidebar extends Component {
     }
 
     renderPanelContents() {
+        if (!this.currentVideo) {
+            return <p>There are no videos detected on this page.</p>
+        }
+
         if (this.state.finishedVideoId) {
             return <a href={`http://localhost:${this.props.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>Note saved</a>
         }
@@ -211,7 +224,6 @@ class Sidebar extends Component {
 
     let root = createRoot(reactContainer);
     root.render(<Sidebar {... { frontendPort, notebooks }} />);
-
 
     let currentUrl = window.location.href;
     setInterval(() => {
