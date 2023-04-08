@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatTime } from './util';
 
-export function Note({ onDelete, time, note }) {
+export default function Note({ onDelete, time, note }) {
     return (
         <div class="note">
             <div class="note-header">

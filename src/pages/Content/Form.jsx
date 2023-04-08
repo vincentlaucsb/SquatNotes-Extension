@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { formatTime } from './util';
 
-export function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
+export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
     let [value, setValue] = useState("");
 
     const onAddNote = () => {
