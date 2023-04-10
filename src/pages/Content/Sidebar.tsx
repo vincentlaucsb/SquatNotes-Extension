@@ -66,6 +66,8 @@ export default class Sidebar extends Component {
             return { time, note };
         });
 
+        console.log("Saving", notes);
+
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
             notes: JSON.stringify({ notes: notes }),
@@ -187,7 +189,7 @@ export default class Sidebar extends Component {
         }).then((data) => {
             this.setState({ messages: [...this.state.messages, ...data.messages] })
 
-            if (!data.videoId) {
+            if (!data.finished) {
                 setTimeout(() => {
                     this.updateProgress(progressLink);
                 }, 500);
