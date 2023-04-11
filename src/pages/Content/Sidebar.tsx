@@ -66,8 +66,6 @@ export default class Sidebar extends Component {
             return { time, note };
         });
 
-        console.log("Saving", notes);
-
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
             notes: JSON.stringify({ notes: notes }),
