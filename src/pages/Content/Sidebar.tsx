@@ -14,6 +14,7 @@ export default class Sidebar extends Component {
             isSavingNote: false,
             isVisible: false,
             messages: [],
+            notebooks: [],
             notes: [],
             selectedNotebook: null
         };
@@ -51,11 +52,21 @@ export default class Sidebar extends Component {
                 }
             }
         });
+
+        this.loadNotebooks();
     }
 
     deleteNote(time) {
         this.setState({
             notes: this.state.notes.filter(_ => _.time != time)
+        });
+    }
+
+    loadNotebooks() {
+        chrome.runtime.sendMessage({
+            contentScriptQuery: "getNotebooks"
+        }).then((notebooks) => {
+            this.setState({ notebooks });
         });
     }
 
@@ -155,11 +166,11 @@ export default class Sidebar extends Component {
                 />
                 <div id="save-note">
                     <h2>Save Note</h2>
-                    {this.props.notebooks != null ? (
+                    {this.state.notebooks != null ? (
                         <div id="notebook-picker">
                             <NotebookPicker
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
-                                notebooks={this.props.notebooks}
+                                notebooks={this.state.notebooks}
                                 onSelectNotebook={(value) => this.setState({
                                     selectedNotebook: value
                                 })}
@@ -173,7 +184,10 @@ export default class Sidebar extends Component {
                                 selectedNotebook={this.state.selectedNotebook}
                             />
                         </div>) : (
-                        <p>It appears SquatNotes is not running. Please launch SquatNotes and reload this page.</p>
+                        <p>
+                            It appears SquatNotes is not running. Please launch SquatNotes and reload this page.
+                            <button onClick={() => this.loadNotebooks()}>Reload</button>
+                        </p>
                     )}
                 </div>
             </>

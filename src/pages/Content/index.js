@@ -10,17 +10,13 @@ import Sidebar from "./Sidebar";
         contentScriptQuery: "getFrontendPort"
     });
 
-    const notebooks = await chrome.runtime.sendMessage({
-        contentScriptQuery: "getNotebooks"
-    });
-
     const body = document.body;
 
     const reactContainer = document.createElement("div");
     body.appendChild(reactContainer);
 
     let root = createRoot(reactContainer);
-    root.render(<Sidebar {... { frontendPort, notebooks }} />);
+    root.render(<Sidebar {... { frontendPort }} />);
 
     let currentUrl = window.location.href;
     setInterval(() => {
@@ -28,7 +24,7 @@ import Sidebar from "./Sidebar";
             currentUrl = window.location.href;
             root.unmount();
             root = createRoot(reactContainer);
-            root.render(<Sidebar {... { frontendPort, notebooks }} />);
+            root.render(<Sidebar {... { frontendPort }} />);
         }
     }, 1000);
 })();
