@@ -196,7 +196,7 @@ export default class Sidebar extends Component {
                             />
                         </div>) : (
                         <p>
-                            It appears SquatNotes is not running. Please launch SquatNotes and reload this page.
+                            It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
                             <button className="notebook-picker-reload" onClick={() => this.loadNotebooks()}>
                                 <img className="button-icon" src={chrome.runtime.getURL("refresh.png")} alt="Reload" /> Reload
                             </button>
