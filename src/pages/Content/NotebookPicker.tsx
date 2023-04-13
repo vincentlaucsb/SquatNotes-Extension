@@ -12,12 +12,12 @@ export type NotebookPickerProps = {
 export default function NotebookPicker(props: NotebookPickerProps) {
     return (
         <>
-            <select name="notebook" value={props.selectedNotebook} onChange={(e) => {
+            <select name="notebook" value={props.selectedNotebook || ""} onChange={(e) => {
                 props.onSelectNotebook(e.currentTarget.value);
             }}>
                 <option value="">Select a notebook</option>
                 {Array.isArray(props.notebooks) ? props.notebooks.map(({ id, name }) => {
-                    return (<option value={id}>{name}</option>);
+                    return (<option value={id} key={id}>{name}</option>);
                 }) : null}
             </select>
             <button className="save-note" onClick={() => props.saveNote()} disabled={props.disabled}

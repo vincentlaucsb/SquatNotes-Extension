@@ -10,6 +10,7 @@ export default class Sidebar extends Component {
 
         this.state = {
             currentTime: NaN,
+            frontendPort: -1,
             finishedVideoId: null,
             isSavingNote: false,
             isVisible: false,
@@ -67,6 +68,16 @@ export default class Sidebar extends Component {
             contentScriptQuery: "getNotebooks"
         }).then((notebooks) => {
             this.setState({ notebooks });
+        }).catch(() => {
+            this.setState({ notebooks: null });
+        });
+
+        chrome.runtime.sendMessage({
+            contentScriptQuery: "getFrontendPort"
+        }).then((port) => {
+            this.setState({ frontendPort: port });
+        }).catch(() => {
+
         });
     }
 
@@ -102,7 +113,7 @@ export default class Sidebar extends Component {
         }
 
         if (this.state.finishedVideoId) {
-            return <a href={`http://localhost:${this.props.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>Note saved</a>
+            return <a href={`http://localhost:${this.state.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>Note saved</a>
         }
 
         if (this.state.isSavingNote) {
@@ -166,7 +177,7 @@ export default class Sidebar extends Component {
                 />
                 <div id="save-note">
                     <h2>Save Note</h2>
-                    {this.state.notebooks != null ? (
+                    {this.state.notebooks?.count > 0 ? (
                         <div id="notebook-picker">
                             <NotebookPicker
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
@@ -186,7 +197,9 @@ export default class Sidebar extends Component {
                         </div>) : (
                         <p>
                             It appears SquatNotes is not running. Please launch SquatNotes and reload this page.
-                            <button onClick={() => this.loadNotebooks()}>Reload</button>
+                            <button className="notebook-picker-reload" onClick={() => this.loadNotebooks()}>
+                                <img className="button-icon" src={chrome.runtime.getURL("refresh.png")} alt="Reload" /> Reload
+                            </button>
                         </p>
                     )}
                 </div>

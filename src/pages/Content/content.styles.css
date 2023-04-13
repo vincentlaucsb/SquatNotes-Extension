@@ -107,6 +107,10 @@
     display: flex;
 }
 
+.notebook-picker-reload {
+    margin-top: var(--spacing-2);
+}
+
 #add-note {
     margin-top: var(--spacing-3);
 }
