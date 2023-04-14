@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Note from './Note';
 import Form from './Form';
 import NotebookPicker from './NotebookPicker';
+import Theme from './Theme';
 
 export default class Sidebar extends Component {
     constructor(props) {
@@ -10,6 +11,7 @@ export default class Sidebar extends Component {
 
         this.state = {
             currentTime: NaN,
+            dark: false,
             frontendPort: -1,
             finishedVideoId: null,
             isSavingNote: false,
@@ -98,12 +100,28 @@ export default class Sidebar extends Component {
 
     render() {
         return (
-            <div id="squatnotes" style={{
-                display: this.state.isVisible ? "flex" : "none"
-            }}>
-                <h1>Notes</h1>
-                {this.renderPanelContents()}
-            </div>
+            <>
+                <Theme dark={this.state.dark} />
+                <div id="squatnotes" style={{
+                    display: this.state.isVisible ? "flex" : "none"
+                }}>
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between"
+                    }}>
+                        <h1>Notes</h1>
+                        <div>
+                            <button onClick={() => {
+                                this.setState({ dark: !this.state.dark });
+                            }}>
+                                {this.state.dark ? "Dark Theme" : "Light Theme"}
+                            </button>
+                        </div>
+                    </div>
+                    {this.renderPanelContents()}
+                </div>
+            </>
         );
     }
 

@@ -22,8 +22,9 @@
 
     flex-direction: column;
 
-    background: #ffffff;
+    background: var(--squatnotes-background);
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
+    color: var(--squatnotes-color);
     z-index: 9999;
     padding: var(--spacing-3);
     border-left: 1px solid #000000;
