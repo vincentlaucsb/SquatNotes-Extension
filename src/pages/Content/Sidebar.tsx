@@ -73,6 +73,7 @@ export default class Sidebar extends Component {
         chrome.runtime.sendMessage({
             contentScriptQuery: "getNotebooks"
         }).then((notebooks) => {
+            console.log("NOTEBOOKS", notebooks);
             this.setState({ notebooks });
         }).catch(() => {
             this.setState({ notebooks: null });
@@ -203,7 +204,7 @@ export default class Sidebar extends Component {
                 />
                 <div id="save-note">
                     <h2>Save Note</h2>
-                    {this.state.notebooks?.count > 0 ? (
+                    {this.state.notebooks?.length > 0 ? (
                         <div id="notebook-picker">
                             <NotebookPicker
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}

@@ -76,6 +76,14 @@
     margin: 1rem 0;
 }
 
+#squatnotes .note-controls button {
+    background: initial;
+}
+
+#squatnotes .note-controls button .button-icon {
+    filter: initial;
+}
+
 #squatnotes .note-header {
     display: flex;
 }

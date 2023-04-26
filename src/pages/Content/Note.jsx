@@ -11,7 +11,9 @@ export default function Note({ onDelete, time, note }) {
                 }} style={{ cursor: "pointer", fontWeight: "bold" }}>{formatTime(time)}</span>
 
                 <div className="note-controls">
-                    <button onClick={onDelete}>Delete</button>
+                    <button onClick={onDelete}>
+                        <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" />
+                    </button>
                 </div>
             </div>
             <span>{note}</span>
