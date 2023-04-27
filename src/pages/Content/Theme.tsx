@@ -12,10 +12,12 @@ export default function ThemeCSS({ theme }: ThemeCSSProps) {
 
     if (theme === Theme.Dark) {
         root.style.setProperty('--squatnotes-background', 'hsl(0, 0%, 15%)');
+        root.style.setProperty('--squatnotes-button-filter', 'invert(1)');
         root.style.setProperty('--squatnotes-color', 'hsl(0, 0%, 90%)');
     }
     else {
         root.style.setProperty('--squatnotes-background', '#ffffff');
+        root.style.setProperty('--squatnotes-button-filter', 'initial');
         root.style.setProperty('--squatnotes-color', 'hsl(0, 0%, 5%)');
     }
 

@@ -1,7 +1,11 @@
+import { marked } from "marked";
 import React from 'react';
+
 import { formatTime } from './util';
 
 export default function Note({ onDelete, time, note }) {
+    const parsedMarkdown = marked.parse(note);
+
     return (
         <div className="note">
             <div className="note-header">
@@ -16,7 +20,7 @@ export default function Note({ onDelete, time, note }) {
                     </button>
                 </div>
             </div>
-            <span>{note}</span>
+            <span dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
         </div>
     );
 }

@@ -81,7 +81,7 @@
 }
 
 #squatnotes .note-controls button .button-icon {
-    filter: initial;
+    filter: var(--squatnotes-button-filter);
 }
 
 #squatnotes .note-header {
