@@ -5,6 +5,8 @@ import Form from './Form';
 import NotebookPicker from './NotebookPicker';
 import ThemeCSS, { Theme } from './Theme';
 
+import "./Content.scss";
+
 export default class Sidebar extends Component {
     constructor(props) {
         super(props);
