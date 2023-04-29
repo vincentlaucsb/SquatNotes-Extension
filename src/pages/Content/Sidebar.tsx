@@ -108,7 +108,7 @@ export default class Sidebar extends Component {
         return (
             <>
                 <ThemeCSS theme={this.state.theme} />
-                <div id="squatnotes" className={this.state.isVisible ? "d-flex" : "d-none"}>
+                <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
