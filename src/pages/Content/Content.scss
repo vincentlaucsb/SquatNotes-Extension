@@ -1,3 +1,15 @@
+@use "sass:math";
+@use "sass:string";
+
+$directions: top, right, bottom, left;
+$axes: (
+    "left": "x",
+    "right": "x",
+    "top": "y",
+    "bottom": "y"
+);
+$spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
+
 #squatnotes {
     --root-font-size: 12pt;
     --spacing-0: 0;
@@ -30,6 +42,65 @@
     border-left: 1px solid #000000;
     font-size: var(--root-font-size);
     overflow-y: auto;
+
+    // Utility Classes
+    .flex {
+        display: flex;
+    }
+
+    .none {
+        display: none;
+    }
+
+    // Spacing Utility Classes
+    @each $direction in $directions {
+        $shorthand: string.slice($direction, 1, 1);
+        $axis: map-get($map: $axes, $key: $direction);
+
+        .m#{$shorthand}-auto,
+        .m#{$axis}-auto {
+            margin-#{$direction}: auto !important;
+        }
+
+        .p#{$shorthand}-auto,
+        .p#{$axis}-auto {
+            padding-#{$direction}: auto !important;
+        }
+
+        .m#{$shorthand}-0,
+        .m#{$axis}-0 {
+            margin-#{$direction}: 0 !important;
+        }
+
+        .p#{$shorthand}-0,
+        .p#{$axis}-0 {
+            padding-#{$direction}: 0 !important;
+        }
+
+        // Level Specific CSS
+        @each $level in $spacing-levels {
+
+            .m#{$shorthand}-#{$level},
+            .m#{$axis}-#{$level} {
+                margin-#{$direction}: var(--spacing-#{$level}) !important;
+            }
+
+            .p#{$shorthand}-#{$level},
+            .p#{$axis}-#{$level} {
+                padding-#{$direction}: var(--spacing-#{$level}) !important;
+            }
+        }
+    }
+
+    @each $level in $spacing-levels {
+        .m-#{$level} {
+            margin: var(--spacing-#{$level}) !important;
+        }
+
+        .p-#{$level} {
+            padding: var(--spacing-#{$level}) !important;
+        }
+    }
 }
 
 #squatnotes,
@@ -60,6 +131,10 @@
     cursor: pointer;
     display: flex;
     padding: var(--spacing-1) var(--spacing-3);
+
+    &:hover {
+        background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
+    }
 }
 
 #squatnotes .button-icon {
@@ -78,10 +153,10 @@
 
 #squatnotes .note-controls button {
     background: initial;
-}
 
-#squatnotes .note-controls button .button-icon {
-    filter: var(--squatnotes-button-filter);
+    .button-icon {
+        filter: var(--squatnotes-button-filter);
+    }
 }
 
 #squatnotes .note-header {
@@ -98,10 +173,6 @@
 
 #squatnotes .save-button {
     margin-top: 1rem;
-}
-
-.note-header {
-    display: flex;
 }
 
 .note-controls {

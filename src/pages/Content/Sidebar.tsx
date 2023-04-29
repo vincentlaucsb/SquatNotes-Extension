@@ -75,7 +75,6 @@ export default class Sidebar extends Component {
         chrome.runtime.sendMessage({
             contentScriptQuery: "getNotebooks"
         }).then((notebooks) => {
-            console.log("NOTEBOOKS", notebooks);
             this.setState({ notebooks });
         }).catch(() => {
             this.setState({ notebooks: null });
@@ -109,9 +108,7 @@ export default class Sidebar extends Component {
         return (
             <>
                 <ThemeCSS theme={this.state.theme} />
-                <div id="squatnotes" style={{
-                    display: this.state.isVisible ? "flex" : "none"
-                }}>
+                <div id="squatnotes" className={this.state.isVisible ? "d-flex" : "d-none"}>
                     <div style={{
                         display: "flex",
                         alignItems: "center",
@@ -150,7 +147,7 @@ export default class Sidebar extends Component {
                 <>
                     <p>Saving...</p>
 
-                    <h2 style={{ marginTop: "var(--spacing-2)" }}>Progress</h2>
+                    <h2 className="mt-2">Progress</h2>
                     <pre style={{ overflow: "auto" }}>
                         {this.state.messages.map((msg) => {
                             return (
@@ -164,7 +161,7 @@ export default class Sidebar extends Component {
 
         return (
             <>
-                <div style={{ overflowY: "auto", paddingRight: "var(--spacing-2)" }}>
+                <div className="pr-2" style={{ overflowY: "auto" }}>
                     {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
                         return (
                             <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />

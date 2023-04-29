@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { formatTime } from './util';
 
 export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
@@ -29,11 +29,11 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
                             autoFocus={true}
                             value={value} style={{ width: "100%" }}
                         />
-                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div className="flex" style={{ justifyContent: "flex-end" }}>
                             <button onClick={stopTakingNotes}>
                                 <strong>Cancel</strong>&nbsp;(Esc)
                             </button>
-                            <button onClick={onAddNote} disabled={!value} style={{ marginLeft: "var(--spacing-2)" }}>
+                            <button className="ml-2" onClick={onAddNote} disabled={!value}>
                                 <strong>Add Note</strong>&nbsp;(Ctrl + Enter)
                             </button>
                         </div>
