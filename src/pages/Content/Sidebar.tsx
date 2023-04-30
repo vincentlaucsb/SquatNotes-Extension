@@ -65,6 +65,16 @@ export default class Sidebar extends Component {
         this.loadNotebooks();
     }
 
+    editNote(time, note) {
+        const newNotes = [...this.state.notes];
+        const noteToUpdate = newNotes.find((note) => note.time === time);
+        noteToUpdate.note = note;
+
+        this.setState({
+            notes: newNotes
+        });
+    }
+
     deleteNote(time) {
         this.setState({
             notes: this.state.notes.filter(_ => _.time != time)
@@ -164,7 +174,11 @@ export default class Sidebar extends Component {
                 <div className="pr-2" style={{ overflowY: "auto" }}>
                     {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
                         return (
-                            <Note onDelete={() => this.deleteNote(time)} time={time} note={note} />
+                            <Note
+                                onEdit={(note) => this.editNote(time, note)}
+                                onDelete={() => this.deleteNote(time)}
+                                time={time} note={note}
+                            />
                         );
                     }) : <p>There are no notes on this video. Once you start taking notes, they will be
                         displayed here.</p>}
