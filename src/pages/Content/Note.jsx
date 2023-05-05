@@ -11,16 +11,18 @@ export default function Note({ onDelete, onEdit, time, note }) {
 
     const noteContent = isEditing ? (
         <div>
-            <textarea onChange={(e) => setTempNoteValue(e.target.value)} value={tempNoteValue} />
-            <button onClick={() => {
-                setIsEditing(false);
-                onEdit(tempNoteValue);
-                setTempNoteValue(tempNoteValue);
-            }}>Save</button>
-            <button onClick={() => {
-                setIsEditing(false);
-                setTempNoteValue(note);
-            }}>Cancel</button>
+            <textarea className="w-100" onChange={(e) => setTempNoteValue(e.target.value)} value={tempNoteValue} />
+            <div className="flex">
+                <button onClick={() => {
+                    setIsEditing(false);
+                    onEdit(tempNoteValue);
+                    setTempNoteValue(tempNoteValue);
+                }}>Save</button>
+                <button className="ml-2" onClick={() => {
+                    setIsEditing(false);
+                    setTempNoteValue(note);
+                }}>Cancel</button>
+            </div>
         </div>
     ) : (
         <span dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
@@ -36,7 +38,7 @@ export default function Note({ onDelete, onEdit, time, note }) {
 
                 <div className="flex note-controls">
                     <button onClick={() => setIsEditing(true)}>
-                        [Edit]
+                        <img className="button-icon" src={chrome.runtime.getURL("pencil.png")} alt="Edit" />
                     </button>
                     <button onClick={onDelete}>
                         <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" />
