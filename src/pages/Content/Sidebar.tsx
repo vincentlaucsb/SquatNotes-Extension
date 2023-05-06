@@ -203,9 +203,11 @@ export default class Sidebar extends Component {
                     {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
                         return (
                             <Note
+                                key={time}
                                 onEdit={(note) => this.editNote(time, note)}
                                 onDelete={() => this.deleteNote(time)}
-                                time={time} note={note}
+                                time={time}
+                                note={note}
                             />
                         );
                     }) : <p>There are no notes on this video. Once you start taking notes, they will be
