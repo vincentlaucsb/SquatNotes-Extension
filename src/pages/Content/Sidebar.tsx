@@ -23,6 +23,8 @@ export default class Sidebar extends Component {
             selectedNotebook: null,
             theme: "light"
         };
+
+        this.addNote = this.addNote.bind(this);
     }
 
     get currentVideo() {
