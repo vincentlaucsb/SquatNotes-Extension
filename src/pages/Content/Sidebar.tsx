@@ -26,12 +26,12 @@ export default class Sidebar extends Component {
     }
 
     get currentVideo() {
-        let ret = document.getElementsByTagName("video")[0];
+        const ret = document.getElementsByTagName("video")[0];
+        return ret?.getAttribute("src") ? ret : null;
+    }
 
-        if (ret?.getAttribute("src"))
-            return ret;
-
-        return null;
+    get noteStorageKey() {
+        return `notes-${window.location.href}`;
     }
 
     componentDidMount() {
@@ -58,27 +58,48 @@ export default class Sidebar extends Component {
             }
         });
 
+        // Load Theme
         chrome.storage.local.get("theme").then((result) => {
             this.setState({ theme: result["theme"] || "light" });
+        });
+
+        // Load Notes
+        chrome.storage.local.get(this.noteStorageKey).then((result) => {
+            this.setState({ notes: result[this.noteStorageKey] || [] });
         });
 
         this.loadNotebooks();
     }
 
-    editNote(time, note) {
-        const newNotes = [...this.state.notes];
-        const noteToUpdate = newNotes.find((note) => note.time === time);
-        noteToUpdate.note = note;
+    addNote(note: string) {
+        const notes = [
+            // prevent notes with duplicate timestamps
+            ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
 
-        this.setState({
-            notes: newNotes
+            // add current note
+            { note, time: this.state.currentTime }
+        ];
+
+        notes.sort((a, b) => {
+            if (a.time > b.time) return 1;
+            else return a.time === b.time ? 0 : -1;
         });
+
+        this.setState({ currentTime: NaN, notes }, this.persistNotes);
     }
 
-    deleteNote(time) {
+    editNote(time: number, note: string) {
+        const notes = [...this.state.notes];
+        const noteToUpdate = notes.find((note) => note.time === time);
+        noteToUpdate.note = note;
+
+        this.setState({ notes }, this.persistNotes);
+    }
+
+    deleteNote(time: number) {
         this.setState({
             notes: this.state.notes.filter(_ => _.time != time)
-        });
+        }, this.persistNotes);
     }
 
     loadNotebooks() {
@@ -97,6 +118,12 @@ export default class Sidebar extends Component {
         }).catch(() => {
 
         });
+    }
+
+    persistNotes() {
+        let items = {};
+        items[this.noteStorageKey] = this.state.notes;
+        chrome.storage.local.set(items);
     }
 
     saveNotes() {
@@ -120,7 +147,6 @@ export default class Sidebar extends Component {
                 <ThemeCSS theme={this.state.theme} />
                 <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
                     <div style={{
-                        display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between"
                     }}>
@@ -183,28 +209,7 @@ export default class Sidebar extends Component {
                     }) : <p>There are no notes on this video. Once you start taking notes, they will be
                         displayed here.</p>}
                 </div>
-                <Form addNote={(note) => {
-                    const notes = [
-                        // prevent notes with duplicate timestamps
-                        ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
-
-                        // add current note
-                        { note, time: this.state.currentTime }
-                    ];
-                    notes.sort((a, b) => {
-                        if (a.time > b.time) {
-                            return 1;
-                        }
-                        else {
-                            return a.time === b.time ? 0 : -1;
-                        }
-                    });
-
-                    this.setState({
-                        currentTime: NaN,
-                        notes
-                    });
-                }}
+                <Form addNote={this.addNote}
                     currentTime={this.state.currentTime}
                     startTakingNotes={() => {
                         this.setState({
