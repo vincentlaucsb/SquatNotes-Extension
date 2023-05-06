@@ -43,6 +43,13 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     font-size: var(--root-font-size);
     overflow-y: auto;
 
+    // Normalization
+    button,
+    textarea,
+    select {
+        font-size: inherit;
+    }
+
     // Utility Classes
     &.flex,
     .flex {
@@ -112,11 +119,6 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     button {
         border: 0;
         cursor: pointer;
-    }
-
-    button,
-    select {
-        font-size: inherit;
     }
 
     .btn-primary {
