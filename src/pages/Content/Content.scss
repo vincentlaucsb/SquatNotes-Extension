@@ -107,6 +107,39 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     .w-100 {
         width: 100% !important;
     }
+
+    // Buttons
+    button {
+        border: 0;
+        cursor: pointer;
+    }
+
+    button,
+    select {
+        font-size: inherit;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border-radius: 4px;
+        color: #ffffff;
+        display: flex;
+        padding: var(--spacing-1) var(--spacing-3);
+
+        &:hover {
+            background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
+        }
+    }
+
+    // Other CSS
+    #theme-toggler {
+        background: none;
+
+        img {
+            filter: var(--squatnotes-button-filter);
+            width: 25px;
+        }
+    }
 }
 
 #squatnotes,
@@ -121,26 +154,6 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
 #squatnotes h5,
 #squatnotes h6 {
     font-weight: 500;
-}
-
-#squatnotes button,
-#squatnotes select {
-    font-size: inherit;
-    padding: 0.25rem 0.375rem;
-}
-
-#squatnotes button {
-    background: var(--primary);
-    border: 0;
-    border-radius: 4px;
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    padding: var(--spacing-1) var(--spacing-3);
-
-    &:hover {
-        background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
-    }
 }
 
 #squatnotes .button-icon {

@@ -4,6 +4,10 @@ import { formatTime } from './util';
 export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
     let [value, setValue] = useState("");
 
+    React.useEffect(() => {
+        if (!(currentTime > 0)) setValue("");
+    }, [currentTime]);
+
     const onAddNote = () => {
         if (value) {
             addNote(value);
@@ -30,16 +34,16 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
                             value={value} style={{ width: "100%" }}
                         />
                         <div className="flex" style={{ justifyContent: "flex-end" }}>
-                            <button onClick={stopTakingNotes}>
+                            <button className="btn-primary" onClick={stopTakingNotes}>
                                 <strong>Cancel</strong>&nbsp;(Esc)
                             </button>
-                            <button className="ml-2" onClick={onAddNote} disabled={!value}>
+                            <button className="btn-primary ml-2" onClick={onAddNote} disabled={!value}>
                                 <strong>Add Note</strong>&nbsp;(Ctrl + Enter)
                             </button>
                         </div>
                     </>
                     :
-                    <button onClick={() => startTakingNotes()}>
+                    <button className="btn-primary" onClick={() => startTakingNotes()}>
                         <img className="button-icon" src={chrome.runtime.getURL("notes.png")}
                             alt="Add Note" />
                         <strong>Add Note</strong>&nbsp;(Ctrl + Space)

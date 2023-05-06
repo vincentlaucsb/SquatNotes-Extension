@@ -148,21 +148,23 @@ export default class Sidebar extends Component {
             <>
                 <ThemeCSS theme={this.state.theme} />
                 <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
-                    <div style={{
-                        display: "flex",
+                    <div className="flex" style={{
                         alignItems: "center",
                         justifyContent: "space-between"
                     }}>
                         <h1>Notes</h1>
                         <div>
-                            <button onClick={() => {
+                            <button id="theme-toggler" onClick={() => {
                                 const newTheme = this.state.theme === Theme.Dark ? Theme.Light : Theme.Dark;
                                 this.setState({ theme: newTheme });
                                 chrome.storage.local.set({
                                     theme: newTheme
                                 });
-                            }}>
-                                {this.state.theme === Theme.Dark ? "Dark Theme" : "Light Theme"}
+                            }} title="Click to change theme">
+                                {this.state.theme === Theme.Dark ?
+                                    <img src={chrome.runtime.getURL("moon.png")} alt="Dark Theme" /> :
+                                    <img src={chrome.runtime.getURL("sun-high.png")} alt="Light Theme" />
+                                }
                             </button>
                         </div>
                     </div>
@@ -247,7 +249,7 @@ export default class Sidebar extends Component {
                         </div>) : (
                         <p>
                             It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
-                            <button className="notebook-picker-reload" onClick={() => this.loadNotebooks()}>
+                            <button className="btn-primary notebook-picker-reload" onClick={() => this.loadNotebooks()}>
                                 <img className="button-icon" src={chrome.runtime.getURL("reload.png")} alt="Reload" /> Reload
                             </button>
                         </p>

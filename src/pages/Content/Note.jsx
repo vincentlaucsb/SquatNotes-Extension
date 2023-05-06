@@ -13,12 +13,12 @@ export default function Note({ onDelete, onEdit, time, note }) {
         <div>
             <textarea className="w-100" onChange={(e) => setTempNoteValue(e.target.value)} value={tempNoteValue} />
             <div className="flex">
-                <button onClick={() => {
+                <button className="btn-primary" onClick={() => {
                     setIsEditing(false);
                     onEdit(tempNoteValue);
                     setTempNoteValue(tempNoteValue);
                 }}>Save</button>
-                <button className="ml-2" onClick={() => {
+                <button className="btn-primary ml-2" onClick={() => {
                     setIsEditing(false);
                     setTempNoteValue(note);
                 }}>Cancel</button>

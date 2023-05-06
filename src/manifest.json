@@ -39,9 +39,11 @@
     {
       "resources": [
         "device-floppy.png",
+        "moon.png",
         "notes.png",
         "pencil.png",
         "reload.png",
+        "sun-high.png",
         "trash.png",
         "Icon Logo.png"
       ],
