@@ -149,6 +149,7 @@ export default class Sidebar extends Component {
                 <ThemeCSS theme={this.state.theme} />
                 <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
                     <div style={{
+                        display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between"
                     }}>
