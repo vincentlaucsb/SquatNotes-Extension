@@ -29,8 +29,8 @@ export default function Note({ onDelete, onEdit, time, note }) {
     );
 
     return (
-        <div className="note">
-            <div className="note-header">
+        <div className="note my-2">
+            <div className="flex" style={{ justifyContent: "space-between" }} >
                 <span onClick={() => {
                     const currentVideo = document.getElementsByTagName("video")[0];
                     currentVideo.currentTime = time;

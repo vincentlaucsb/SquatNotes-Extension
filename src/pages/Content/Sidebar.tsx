@@ -67,7 +67,7 @@ export default class Sidebar extends Component {
 
         // Load Notes
         chrome.storage.local.get(this.noteStorageKey).then((result) => {
-            this.setState({ notes: result[this.noteStorageKey] || [] });
+            this.setState({ notes: result[this.noteStorageKey]?.notes || [] });
         });
 
         this.loadNotebooks();
@@ -123,8 +123,22 @@ export default class Sidebar extends Component {
     }
 
     persistNotes() {
+        let title = document.title;
+
+        // Remove notification count from title
+        if (window.location.href.includes("youtube.com")) {
+            let newTitle = title.split(' ');
+            newTitle.shift();
+            title = newTitle.join(' ');
+        }
+
         let items = {};
-        items[this.noteStorageKey] = this.state.notes;
+        items[this.noteStorageKey] = {
+            url: window.location.href,
+            notes: this.state.notes,
+            title
+        };
+
         chrome.storage.local.set(items);
     }
 
@@ -227,10 +241,10 @@ export default class Sidebar extends Component {
                         this.setState({ currentTime: null });
                     }}
                 />
-                <div id="save-note">
+                <div id="save-note" className="mt-4">
                     <h2>Save Note</h2>
                     {this.state.notebooks?.length > 0 ? (
-                        <div id="notebook-picker">
+                        <div className="flex">
                             <NotebookPicker
                                 disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
                                 notebooks={this.state.notebooks}
@@ -249,7 +263,7 @@ export default class Sidebar extends Component {
                         </div>) : (
                         <p>
                             It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
-                            <button className="btn-primary notebook-picker-reload" onClick={() => this.loadNotebooks()}>
+                            <button className="btn-primary mt-2" onClick={() => this.loadNotebooks()}>
                                 <img className="button-icon" src={chrome.runtime.getURL("reload.png")} alt="Reload" /> Reload
                             </button>
                         </p>

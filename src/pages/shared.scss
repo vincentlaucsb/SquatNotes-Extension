@@ -1,0 +1,145 @@
+@use "sass:math";
+@use "sass:string";
+
+$directions: top, right, bottom, left;
+$axes: (
+    "left": "x",
+    "right": "x",
+    "top": "y",
+    "bottom": "y"
+);
+$spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
+
+#squatnotes {
+    --spacing-0: 0;
+    --spacing-1: calc(0.25 * var(--root-font-size));
+    --spacing-2: calc(0.5 * var(--root-font-size));
+    --spacing-3: var(--root-font-size);
+    --spacing-4: calc(2 * var(--root-font-size));
+    --spacing-5: calc(4 * var(--root-font-size));
+    --spacing-6: calc(8 * var(--root-font-size));
+    --spacing-7: calc(16 * var(--root-font-size));
+
+    --primary: #0388F5;
+    --primary-hue: 207.0247933884deg;
+    --primary-saturation: 97.5806451613%;
+    --primary-lightness: 48.6274509804%;
+
+    background: var(--squatnotes-background);
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
+    color: var(--squatnotes-color);
+    z-index: 9999;
+    padding: var(--spacing-3);
+    font-size: var(--root-font-size);
+    overflow-y: auto;
+
+    // Normalization
+    button,
+    textarea,
+    select {
+        font-size: inherit;
+    }
+
+    &,
+    * {
+        box-sizing: border-box;
+    }
+
+    * {
+        margin: 0;
+    }
+
+    // Utility Classes
+    &.flex,
+    .flex {
+        display: flex;
+    }
+
+    &.none,
+    .none {
+        display: none;
+    }
+
+    // Spacing Utility Classes
+    @each $direction in $directions {
+        $shorthand: string.slice($direction, 1, 1);
+        $axis: map-get($map: $axes, $key: $direction);
+
+        .m#{$shorthand}-auto,
+        .m#{$axis}-auto {
+            margin-#{$direction}: auto !important;
+        }
+
+        .p#{$shorthand}-auto,
+        .p#{$axis}-auto {
+            padding-#{$direction}: auto !important;
+        }
+
+        .m#{$shorthand}-0,
+        .m#{$axis}-0 {
+            margin-#{$direction}: 0 !important;
+        }
+
+        .p#{$shorthand}-0,
+        .p#{$axis}-0 {
+            padding-#{$direction}: 0 !important;
+        }
+
+        // Level Specific CSS
+        @each $level in $spacing-levels {
+
+            .m#{$shorthand}-#{$level},
+            .m#{$axis}-#{$level} {
+                margin-#{$direction}: var(--spacing-#{$level}) !important;
+            }
+
+            .p#{$shorthand}-#{$level},
+            .p#{$axis}-#{$level} {
+                padding-#{$direction}: var(--spacing-#{$level}) !important;
+            }
+        }
+    }
+
+    @each $level in $spacing-levels {
+        .m-#{$level} {
+            margin: var(--spacing-#{$level}) !important;
+        }
+
+        .p-#{$level} {
+            padding: var(--spacing-#{$level}) !important;
+        }
+    }
+
+    .w-100 {
+        width: 100% !important;
+    }
+
+
+    // Headers
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 500;
+    }
+
+    // Buttons
+    button {
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border-radius: 4px;
+        color: #ffffff;
+        display: flex;
+        padding: var(--spacing-1) var(--spacing-3);
+
+        &:hover {
+            background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
+        }
+    }
+}

@@ -43,7 +43,7 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
                         </div>
                     </>
                     :
-                    <button className="btn-primary" onClick={() => startTakingNotes()}>
+                    <button className="btn-primary mt-2" onClick={() => startTakingNotes()}>
                         <img className="button-icon" src={chrome.runtime.getURL("notes.png")}
                             alt="Add Note" />
                         <strong>Add Note</strong>&nbsp;(Ctrl + Space)

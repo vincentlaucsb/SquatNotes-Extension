@@ -1,0 +1,19 @@
+@import "../shared.scss";
+
+#squatnotes {
+  --root-font-size: 11pt;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+#drafts {
+  padding: 0;
+
+  li {
+    list-style-type: none;
+    padding: var(--spacing-1) 0;
+  }
+}
