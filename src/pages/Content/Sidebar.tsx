@@ -268,6 +268,17 @@ export default class Sidebar extends Component {
                             </button>
                         </p>
                     )}
+                    <div>
+                        <button className="btn-secondary mt-3" onClick={() => {
+                            if (confirm("Are you sure you want to delete your notes for this video?")) {
+                                chrome.storage.local.remove(this.noteStorageKey).then(() => {
+                                    this.setState({ notes: [] });
+                                });
+                            }
+                        }}>
+                            <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" /> Delete Note
+                        </button>
+                    </div>
                 </div>
             </>
         );

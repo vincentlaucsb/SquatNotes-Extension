@@ -25,6 +25,11 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     --primary-saturation: 97.5806451613%;
     --primary-lightness: 48.6274509804%;
 
+    --secondary: #F59602;
+    --secondary-hue: 36.5432098765deg;
+    --secondary-saturation: 98.3805668016%;
+    --secondary-lightness: 48.431372549%;
+
     background: var(--squatnotes-background);
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
     color: var(--squatnotes-color);
@@ -131,15 +136,27 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
         cursor: pointer;
     }
 
-    .btn-primary {
-        background: var(--primary);
+    .btn-primary,
+    .btn-secondary {
         border-radius: 4px;
         color: #ffffff;
         display: flex;
         padding: var(--spacing-1) var(--spacing-3);
+    }
+
+    .btn-primary {
+        background: var(--primary);
 
         &:hover {
             background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
+        }
+    }
+
+    .btn-secondary {
+        background: var(--secondary);
+
+        &:hover {
+            background-color: hsl(var(--secondary-hue), var(--secondary-saturation), calc(var(--secondary-lightness) - 10%)) !important;
         }
     }
 }
