@@ -38,6 +38,7 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "check.png",
         "device-floppy.png",
         "moon.png",
         "notes.png",
@@ -45,6 +46,7 @@
         "reload.png",
         "sun-high.png",
         "trash.png",
+        "x.png",
         "Icon Logo.png"
       ],
       "matches": [

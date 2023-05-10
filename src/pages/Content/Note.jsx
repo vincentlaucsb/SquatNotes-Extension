@@ -5,9 +5,26 @@ import { formatTime } from './util';
 
 export default function Note({ onDelete, onEdit, time, note }) {
     const [isEditing, setIsEditing] = React.useState(false);
+    const [isDeleting, setIsDeleting] = React.useState(false);
+
     const [tempNoteValue, setTempNoteValue] = React.useState(note);
 
     const parsedMarkdown = marked.parse(note);
+
+    const deleteControls = isDeleting ? (
+        <div>
+            <button onClick={onDelete}>
+                <img className="button-icon" src={chrome.runtime.getURL("check.png")} alt="Confirm Delete" />
+            </button>
+            <button onClick={() => setIsDeleting(false)}>
+                <img className="button-icon" src={chrome.runtime.getURL("x.png")} alt="Cancel Delete" />
+            </button>
+        </div>
+    ) : (
+        <button onClick={() => setIsDeleting(true)}>
+            <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" />
+        </button>
+    );
 
     const noteContent = isEditing ? (
         <div>
@@ -40,9 +57,7 @@ export default function Note({ onDelete, onEdit, time, note }) {
                     <button onClick={() => setIsEditing(true)}>
                         <img className="button-icon" src={chrome.runtime.getURL("pencil.png")} alt="Edit" />
                     </button>
-                    <button onClick={onDelete}>
-                        <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" />
-                    </button>
+                    {deleteControls}
                 </div>
             </div>
             {noteContent}
