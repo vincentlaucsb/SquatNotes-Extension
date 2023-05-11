@@ -8,10 +8,13 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "Icon Logo.png"
+    "default_icon": "icon128.png"
   },
   "icons": {
-    "128": "Icon Logo.png"
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "content_scripts": [
     {
@@ -47,7 +50,10 @@
         "sun-high.png",
         "trash.png",
         "x.png",
-        "Icon Logo.png"
+        "icon16.png",
+        "icon32.png",
+        "icon48.png",
+        "icon128.png"
       ],
       "matches": [
         "<all_urls>"

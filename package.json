@@ -49,6 +49,7 @@
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
     "source-map-loader": "^3.0.1",
+    "squatnotes-logo": "file:..//SquatNotes-Logo",
     "squatnotes-style": "file:..//SquatNotes-Style",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.6",

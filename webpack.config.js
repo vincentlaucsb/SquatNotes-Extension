@@ -169,7 +169,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'node_modules/squatnotes-style/logo/Icon Logo.png',
+          from: 'node_modules/squatnotes-logo/extension',
           to: path.join(__dirname, 'build'),
           force: true,
         },
