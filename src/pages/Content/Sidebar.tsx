@@ -104,6 +104,10 @@ export default class Sidebar extends Component {
         }, this.persistNotes);
     }
 
+    async deleteNotes() {
+        return chrome.storage.local.remove(this.noteStorageKey);
+    }
+
     loadNotebooks() {
         chrome.runtime.sendMessage({
             contentScriptQuery: "getNotebooks"
@@ -271,7 +275,7 @@ export default class Sidebar extends Component {
                     <div>
                         <button className="btn-secondary mt-3" onClick={() => {
                             if (confirm("Are you sure you want to delete your notes for this video?")) {
-                                chrome.storage.local.remove(this.noteStorageKey).then(() => {
+                                this.deleteNotes().then(() => {
                                     this.setState({ notes: [] });
                                 });
                             }
@@ -297,7 +301,12 @@ export default class Sidebar extends Component {
                 }, 500);
             }
             else {
-                this.setState({ finishedVideoId: data.videoId });
+                this.deleteNotes().then(() => {
+                    this.setState({
+                        finishedVideoId: data.videoId,
+                        notes: []
+                    });
+                });
             }
         });
     }

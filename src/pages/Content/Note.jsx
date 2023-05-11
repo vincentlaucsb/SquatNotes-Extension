@@ -14,10 +14,12 @@ export default function Note({ onDelete, onEdit, time, note }) {
     const deleteControls = isDeleting ? (
         <div>
             <button onClick={onDelete}>
-                <img className="button-icon" src={chrome.runtime.getURL("check.png")} alt="Confirm Delete" />
+                <img className="button-icon" src={chrome.runtime.getURL("check.png")}
+                    alt="Confirm Delete" title="Confirm Delete" />
             </button>
             <button onClick={() => setIsDeleting(false)}>
-                <img className="button-icon" src={chrome.runtime.getURL("x.png")} alt="Cancel Delete" />
+                <img className="button-icon" src={chrome.runtime.getURL("x.png")}
+                    alt="Cancel Delete" title="Cancel Delete" />
             </button>
         </div>
     ) : (
