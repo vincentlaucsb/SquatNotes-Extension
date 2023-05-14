@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Notetaker by SquatNotes",
-  "description": "A chrome extension boilerplate built with React 17, Webpack 5, and Webpack Dev Server 4",
+  "name": "Video Notetaker by SquatNotes",
+  "description": "A notetaking tool for YouTube and Rumble videos.",
   "options_page": "options.html",
   "background": {
     "service_worker": "background.bundle.js"

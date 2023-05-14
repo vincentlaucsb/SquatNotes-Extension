@@ -22,7 +22,7 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
     };
 
     return (
-        <div id="add-note">
+        <div id="add-note" className="mt-2">
             {
                 currentTime > 0 ?
                     <>
