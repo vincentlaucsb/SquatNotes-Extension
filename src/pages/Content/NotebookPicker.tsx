@@ -12,7 +12,7 @@ export type NotebookPickerProps = {
 export default function NotebookPicker(props: NotebookPickerProps) {
     return (
         <>
-            <select name="notebook" value={props.selectedNotebook || ""} onChange={(e) => {
+            <select className="rounded-2 px-1" name="notebook" value={props.selectedNotebook || ""} onChange={(e) => {
                 props.onSelectNotebook(e.currentTarget.value);
             }}>
                 <option value="">Select a notebook</option>

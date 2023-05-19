@@ -68,7 +68,7 @@ export default function Note({ onDelete, onEdit, time, note }: NoteProps) {
             />
             <div className="flex" style={{ justifyContent: "flex-end" }} >
                 <button className="btn-primary" onClick={() => {
-                    setNoteMode(NoteMode.Editing)
+                    setNoteMode(NoteMode.Viewing)
                     setTempNoteValue(note);
                 }} title="Edit Note">
                     <strong>Cancel</strong>&nbsp;(Esc)

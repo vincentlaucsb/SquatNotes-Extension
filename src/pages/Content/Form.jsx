@@ -28,13 +28,14 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
                     <>
                         <h2>Add a Note: <span id="current-time">{formatTime(currentTime)}</span></h2>
                         <textarea
+                            autoFocus={true}
+                            className="rounded-1"
                             onChange={(e) => setValue(e.target.value)}
                             onKeyDown={textareaKeyDownHandler}
-                            autoFocus={true}
                             value={value} style={{ width: "100%" }}
                         />
                         <div className="flex" style={{ justifyContent: "flex-end" }}>
-                            <button className="btn-primary" onClick={stopTakingNotes}>
+                            <button onClick={stopTakingNotes}>
                                 <strong>Cancel</strong>&nbsp;(Esc)
                             </button>
                             <button className="btn-primary ml-2" onClick={onAddNote} disabled={!value}>

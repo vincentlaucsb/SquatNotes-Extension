@@ -1,3 +1,6 @@
+@use "../../node_modules/squatnotes-style/sass/mixins/border";
+@use "../../node_modules/squatnotes-style/sass/mixins/colors";
+@use "../../node_modules/squatnotes-style/sass/mixins/spacing";
 @use "sass:math";
 @use "sass:string";
 
@@ -10,7 +13,15 @@ $axes: (
 );
 $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
 
+:root {
+    @include colors.generate-grays("squatnotes-");
+}
+
 #squatnotes {
+    --rounded-0: 0;
+    --rounded-1: 0.25rem;
+    --rounded-2: 0.50rem;
+
     --spacing-0: 0;
     --spacing-1: calc(0.25 * var(--root-font-size));
     --spacing-2: calc(0.5 * var(--root-font-size));
@@ -42,7 +53,8 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     button,
     textarea,
     select {
-        font-size: inherit;
+        color: inherit;
+        font: inherit;
     }
 
     &,
@@ -54,6 +66,9 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
         margin: 0;
     }
 
+    @include border.rounded-classes();
+    @include spacing.spacing-classes();
+
     // Utility Classes
     &.flex,
     .flex {
@@ -63,56 +78,6 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     &.none,
     .none {
         display: none;
-    }
-
-    // Spacing Utility Classes
-    @each $direction in $directions {
-        $shorthand: string.slice($direction, 1, 1);
-        $axis: map-get($map: $axes, $key: $direction);
-
-        .m#{$shorthand}-auto,
-        .m#{$axis}-auto {
-            margin-#{$direction}: auto !important;
-        }
-
-        .p#{$shorthand}-auto,
-        .p#{$axis}-auto {
-            padding-#{$direction}: auto !important;
-        }
-
-        .m#{$shorthand}-0,
-        .m#{$axis}-0 {
-            margin-#{$direction}: 0 !important;
-        }
-
-        .p#{$shorthand}-0,
-        .p#{$axis}-0 {
-            padding-#{$direction}: 0 !important;
-        }
-
-        // Level Specific CSS
-        @each $level in $spacing-levels {
-
-            .m#{$shorthand}-#{$level},
-            .m#{$axis}-#{$level} {
-                margin-#{$direction}: var(--spacing-#{$level}) !important;
-            }
-
-            .p#{$shorthand}-#{$level},
-            .p#{$axis}-#{$level} {
-                padding-#{$direction}: var(--spacing-#{$level}) !important;
-            }
-        }
-    }
-
-    @each $level in $spacing-levels {
-        .m-#{$level} {
-            margin: var(--spacing-#{$level}) !important;
-        }
-
-        .p-#{$level} {
-            padding: var(--spacing-#{$level}) !important;
-        }
     }
 
     .w-100 {
@@ -133,6 +98,7 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     // Buttons
     button {
         border: 0;
+        background: none;
         cursor: pointer;
     }
 
@@ -158,5 +124,11 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
         &:hover {
             background-color: hsl(var(--secondary-hue), var(--secondary-saturation), calc(var(--secondary-lightness) - 10%)) !important;
         }
+    }
+
+    // Forms
+    select,
+    textarea {
+        background-color: var(--squatnotes-input-bg);
     }
 }
