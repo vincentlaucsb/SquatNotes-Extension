@@ -35,16 +35,16 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
                             value={value} style={{ width: "100%" }}
                         />
                         <div className="flex" style={{ justifyContent: "flex-end" }}>
-                            <button onClick={stopTakingNotes}>
+                            <button className="btn hover-btn-primary" onClick={stopTakingNotes}>
                                 <strong>Cancel</strong>&nbsp;(Esc)
                             </button>
-                            <button className="btn-primary ml-2" onClick={onAddNote} disabled={!value}>
+                            <button className="btn btn-primary ml-2" onClick={onAddNote} disabled={!value}>
                                 <strong>Add Note</strong>&nbsp;(Ctrl + Enter)
                             </button>
                         </div>
                     </>
                     :
-                    <button className="btn-primary mt-2" onClick={() => startTakingNotes()}>
+                    <button className="btn btn-primary mt-2" onClick={() => startTakingNotes()}>
                         <img className="button-icon" src={chrome.runtime.getURL("notes.png")}
                             alt="Add Note" />
                         <strong>Add Note</strong>&nbsp;(Ctrl + Space)

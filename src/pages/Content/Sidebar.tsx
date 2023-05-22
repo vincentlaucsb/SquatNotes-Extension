@@ -267,13 +267,13 @@ export default class Sidebar extends Component {
                         </div>) : (
                         <p>
                             It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
-                            <button className="btn-primary mt-2" onClick={() => this.loadNotebooks()}>
+                            <button className="btn btn-primary mt-2" onClick={() => this.loadNotebooks()}>
                                 <img className="button-icon" src={chrome.runtime.getURL("reload.png")} alt="Reload" /> Reload
                             </button>
                         </p>
                     )}
                     <div>
-                        <button className="btn-secondary mt-3" onClick={() => {
+                        <button className="btn btn-secondary mt-3" onClick={() => {
                             if (confirm("Are you sure you want to delete your notes for this video?")) {
                                 this.deleteNotes().then(() => {
                                     this.setState({ notes: [] });

@@ -67,13 +67,13 @@ export default function Note({ onDelete, onEdit, time, note }: NoteProps) {
                 value={tempNoteValue}
             />
             <div className="flex" style={{ justifyContent: "flex-end" }} >
-                <button className="btn-primary" onClick={() => {
+                <button className="btn hover-btn-secondary" onClick={() => {
                     setNoteMode(NoteMode.Viewing)
                     setTempNoteValue(note);
                 }} title="Edit Note">
                     <strong>Cancel</strong>&nbsp;(Esc)
                 </button>
-                <button className="btn-primary ml-2" onClick={() => saveEdit()} title="Delete Note">
+                <button className="btn btn-secondary ml-2" onClick={() => saveEdit()} title="Delete Note">
                     <strong>Save</strong>&nbsp;(Ctrl + Enter)
                 </button>
             </div>

@@ -1,3 +1,4 @@
+@use "../../node_modules/squatnotes-style/sass/mixins/buttons";
 @use "../../node_modules/squatnotes-style/sass/mixins/border";
 @use "../../node_modules/squatnotes-style/sass/mixins/colors";
 @use "../../node_modules/squatnotes-style/sass/mixins/spacing";
@@ -22,14 +23,7 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     --rounded-1: 0.25rem;
     --rounded-2: 0.50rem;
 
-    --spacing-0: 0;
-    --spacing-1: calc(0.25 * var(--root-font-size));
-    --spacing-2: calc(0.5 * var(--root-font-size));
-    --spacing-3: var(--root-font-size);
-    --spacing-4: calc(2 * var(--root-font-size));
-    --spacing-5: calc(4 * var(--root-font-size));
-    --spacing-6: calc(8 * var(--root-font-size));
-    --spacing-7: calc(16 * var(--root-font-size));
+    @include spacing.spacing-variables(var(--root-font-size));
 
     --primary: #0388F5;
     --primary-hue: 207.0247933884deg;
@@ -55,6 +49,11 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     select {
         color: inherit;
         font: inherit;
+    }
+
+    button {
+        display: flex !important;
+        align-items: center;
     }
 
     &,
@@ -102,29 +101,7 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
         cursor: pointer;
     }
 
-    .btn-primary,
-    .btn-secondary {
-        border-radius: 4px;
-        color: #ffffff;
-        display: flex;
-        padding: var(--spacing-1) var(--spacing-3);
-    }
-
-    .btn-primary {
-        background: var(--primary);
-
-        &:hover {
-            background-color: hsl(var(--primary-hue), var(--primary-saturation), calc(var(--primary-lightness) - 10%)) !important;
-        }
-    }
-
-    .btn-secondary {
-        background: var(--secondary);
-
-        &:hover {
-            background-color: hsl(var(--secondary-hue), var(--secondary-saturation), calc(var(--secondary-lightness) - 10%)) !important;
-        }
-    }
+    @include buttons.button-classes();
 
     // Forms
     select,

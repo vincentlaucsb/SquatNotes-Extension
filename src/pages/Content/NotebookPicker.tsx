@@ -20,7 +20,7 @@ export default function NotebookPicker(props: NotebookPickerProps) {
                     return (<option value={id} key={id}>{name}</option>);
                 }) : null}
             </select>
-            <button className="btn-primary ml-2" onClick={() => props.saveNote()} disabled={props.disabled}>
+            <button className="btn btn-primary ml-2" onClick={() => props.saveNote()} disabled={props.disabled}>
                 <img className="button-icon" src={chrome.runtime.getURL("device-floppy.png")} alt="Save Note" />
                 Save
             </button>
