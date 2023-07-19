@@ -250,7 +250,7 @@ export default class Sidebar extends Component {
                     {this.state.notebooks?.length > 0 ? (
                         <div className="flex">
                             <NotebookPicker
-                                disabled={(this.state.notes.length === 0) || !this.state.selectedNotebook}
+                                disabled={!this.state.selectedNotebook}
                                 notebooks={this.state.notebooks}
                                 onSelectNotebook={(value) => this.setState({
                                     selectedNotebook: value
