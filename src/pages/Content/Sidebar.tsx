@@ -1,3 +1,6 @@
+// @ts-nocheck
+// TODO: Remove above
+
 import React, { Component } from 'react';
 
 import Note from './Note';

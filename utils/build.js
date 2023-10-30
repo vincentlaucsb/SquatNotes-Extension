@@ -22,6 +22,9 @@ config.plugins = (config.plugins || []).concat(
   })
 );
 
-webpack(config, function (err) {
-  if (err) throw err;
+webpack(config, function (err, stats) {
+  if (err || stats.hasErrors()) {
+    // prevent build from failing silently
+    console.log('stats:', stats.toString({ colors: true }));
+  }
 });

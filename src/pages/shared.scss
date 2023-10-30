@@ -29,19 +29,22 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     --primary-hue: 207.0247933884deg;
     --primary-saturation: 97.5806451613%;
     --primary-lightness: 48.6274509804%;
+    --primary-text: #ffffff;
 
     --secondary: #F59602;
     --secondary-hue: 36.5432098765deg;
     --secondary-saturation: 98.3805668016%;
     --secondary-lightness: 48.431372549%;
+    --secondary-text: #ffffff;
 
     background: var(--squatnotes-background);
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
     color: var(--squatnotes-color);
-    z-index: 9999;
+    min-height: 400px;
     padding: var(--spacing-3);
     font-size: var(--root-font-size);
     overflow-y: auto;
+    z-index: 9999;
 
     // Normalization
     button,

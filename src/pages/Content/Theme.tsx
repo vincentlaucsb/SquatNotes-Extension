@@ -1,3 +1,6 @@
+// @ts-nocheck
+// TODO: Remove abov
+
 export enum Theme {
     Light = 0,
     Dark

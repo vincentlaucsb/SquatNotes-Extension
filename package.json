@@ -1,8 +1,7 @@
 {
   "name": "squatnotes-extension",
-  "version": "2023.5.11",
+  "version": "2023.10.26",
   "description": "SquatNotes Chrome Extension",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
