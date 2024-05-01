@@ -41,12 +41,14 @@ export default class Sidebar extends Component {
 
     componentDidMount() {
         document.body.addEventListener("keydown", (e) => {
+            let isSquatNotesCmd = false;
+
             if (e.ctrlKey && e.key === 's') {
                 this.setState({
                     isVisible: !this.state.isVisible
                 });
 
-                e.preventDefault();
+                isSquatNotesCmd = true;
             }
 
             if (this.state.isVisible) {
@@ -54,12 +56,22 @@ export default class Sidebar extends Component {
                     this.setState({
                         currentTime: this.currentVideo.currentTime
                     });
+
+                    isSquatNotesCmd = true;
                 }
                 else if (e.key === 'Escape') {
                     this.setState({
                         currentTime: null
                     });
+
+                    isSquatNotesCmd = true;
                 }
+            }
+
+            // Prevents SquatNotes hotkeys from triggering
+            // native browser actions
+            if (isSquatNotesCmd) {
+                e.preventDefault();
             }
         });
 

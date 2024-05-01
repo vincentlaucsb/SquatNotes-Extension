@@ -6,7 +6,7 @@ const Popup = () => {
   let videoURLs = [];
   for (let key of Object.keys(data)) {
     if (key.startsWith('notes-')) {
-      videoURLs.push([data[key].title, key.split('-')[1]]);
+      videoURLs.push([data[key].title, key.replace('notes-', '')]);
     }
   }
 

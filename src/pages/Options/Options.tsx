@@ -22,19 +22,21 @@ const Options: React.FC<Props> = ({ title }: Props) => {
 
   return (
     <div className="OptionsContainer">
-      <h1>{title} Page</h1>
+      <h1>SquatNotes Extension Settings</h1>
 
       <div>
         <h2>Hotkeys</h2>
         <div>
-          <strong>Open notetaking panel</strong>
+          <strong>Open Notetaking Panel</strong>
           <div>
             Ctrl + <input type="text" value={notesHotkey}></input>
           </div>
         </div>
       </div>
 
-      <button type="submit">Save</button>
+      <button type="submit" style={{
+        marginTop: "2rem"
+      }}>Save</button>
     </div>
   );
 };
