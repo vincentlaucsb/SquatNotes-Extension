@@ -18,7 +18,8 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     @include colors.generate-grays("squatnotes-");
 }
 
-#squatnotes {
+#squatnotes,
+#squatnotes-settings {
     --rounded-0: 0;
     --rounded-1: 0.25rem;
     --rounded-2: 0.50rem;
@@ -36,15 +37,6 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     --secondary-saturation: 98.3805668016%;
     --secondary-lightness: 48.431372549%;
     --secondary-text: #ffffff;
-
-    background: var(--squatnotes-background);
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
-    color: var(--squatnotes-color);
-    min-height: 400px;
-    padding: var(--spacing-3);
-    font-size: var(--root-font-size);
-    overflow-y: auto;
-    z-index: 9999;
 
     // Normalization
     button,
@@ -111,4 +103,15 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     textarea {
         background-color: var(--squatnotes-input-bg);
     }
+}
+
+#squatnotes {
+    background: var(--squatnotes-background);
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
+    color: var(--squatnotes-color);
+    min-height: 400px;
+    padding: var(--spacing-3);
+    font-size: var(--root-font-size);
+    overflow-y: auto;
+    z-index: 9999;
 }

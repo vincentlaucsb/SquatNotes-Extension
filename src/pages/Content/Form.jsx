@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
-import { formatTime } from './util';
+import React, { useEffect, useRef, useState } from 'react';
+import { formatTime, SNAPSHOT_WIDTH } from './util';
 
 export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
-    let [value, setValue] = useState("");
+    const [value, setValue] = useState("");
+    const canvasRef = useRef();
+    const videoSnapshot = useRef();
+    const video = document.getElementsByTagName("video")[0];
 
-    React.useEffect(() => {
-        if (!(currentTime > 0)) setValue("");
+    useEffect(() => {
+        if (!(currentTime > 0)) {
+            setValue("");
+        }
+        else {
+            const aspectRatio = video.videoWidth / video.videoHeight;
+            const snapshotHeight = SNAPSHOT_WIDTH / aspectRatio;
+
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, SNAPSHOT_WIDTH, snapshotHeight);
+
+            const frameData = context.getImageData(0, 0, SNAPSHOT_WIDTH, snapshotHeight).data;
+            videoSnapshot.current = frameData;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
     }, [currentTime]);
 
     const onAddNote = () => {
         if (value) {
-            addNote(value);
+            addNote(value, videoSnapshot.current);
             setValue("");
         }
     };
@@ -23,6 +41,9 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
 
     return (
         <div id="add-note" className="mt-2">
+            <canvas id="squatnotes-canvas" ref={canvasRef} style={{
+                display: "none"
+            }}></canvas>
             {
                 currentTime > 0 ?
                     <>

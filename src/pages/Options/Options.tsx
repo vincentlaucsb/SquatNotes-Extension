@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import './Options.css';
+import './Options.scss';
 
 interface Props {
   title: string;
 }
-
 
 const Options: React.FC<Props> = ({ title }: Props) => {
   let [notesHotkey, setNotesHotkey] = useState<any>(null);
@@ -21,7 +20,7 @@ const Options: React.FC<Props> = ({ title }: Props) => {
   }
 
   return (
-    <div className="OptionsContainer">
+    <div>
       <h1>SquatNotes Extension Settings</h1>
 
       <div>
@@ -34,7 +33,7 @@ const Options: React.FC<Props> = ({ title }: Props) => {
         </div>
       </div>
 
-      <button type="submit" style={{
+      <button className="btn btn-primary" type="submit" style={{
         marginTop: "2rem"
       }}>Save</button>
     </div>

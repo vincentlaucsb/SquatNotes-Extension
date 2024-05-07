@@ -88,13 +88,15 @@ export default class Sidebar extends Component {
         this.loadNotebooks();
     }
 
-    addNote(note: string) {
+    addNote(note: string, snapshot: Uint8ClampedArray) {
+        const snapshotJson = JSON.stringify(Array.from(snapshot));
+
         const notes = [
             // prevent notes with duplicate timestamps
             ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
 
             // add current note
-            { note, time: this.state.currentTime }
+            { note, snapshot: snapshotJson, time: this.state.currentTime }
         ];
 
         notes.sort((a, b) => {
@@ -102,6 +104,7 @@ export default class Sidebar extends Component {
             else return a.time === b.time ? 0 : -1;
         });
 
+        console.log(notes);
         this.setState({ currentTime: NaN, notes }, this.persistNotes);
     }
 
@@ -236,13 +239,14 @@ export default class Sidebar extends Component {
         return (
             <>
                 <div className="pr-2" style={{ overflowY: "auto" }}>
-                    {this.state.notes?.length > 0 ? this.state.notes.map(({ note, time }) => {
+                    {this.state.notes?.length > 0 ? this.state.notes.map(({ note, snapshot, time }) => {
                         return (
                             <Note
                                 key={time}
                                 onEdit={(note) => this.editNote(time, note)}
                                 onDelete={() => this.deleteNote(time)}
                                 time={time}
+                                snapshot={snapshot}
                                 note={note}
                             />
                         );

@@ -1,0 +1,18 @@
+@import "../shared.scss";
+
+body {
+    font-size: 100%;
+}
+
+body * {
+    box-sizing: content-box;
+}
+
+h1,
+h2 {
+    margin-top: 0;
+}
+
+#squatnotes-settings {
+    --root-font-size: 12pt;
+}

@@ -1,3 +1,5 @@
+const SNAPSHOT_WIDTH = 120;
+
 export function formatTime(time) {
     const minutes = Math.floor(time / 60);
     const seconds = (time % 60).toFixed(3);
@@ -5,3 +7,5 @@ export function formatTime(time) {
 
     return `${minutes}:${secondsTxt}`;
 }
+
+export { SNAPSHOT_WIDTH };
