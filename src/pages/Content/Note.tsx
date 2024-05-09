@@ -1,8 +1,5 @@
-// @ts-nocheck
-// TODO: Remove above
-
 import { marked } from "marked";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { formatTime, SNAPSHOT_WIDTH } from './util';
 
@@ -13,13 +10,21 @@ enum NoteMode {
 }
 
 type NoteProps = {
-    note: string
+    onEdit: (note: string) => void,
+
+    onDelete: () => void,
+
+    note: string,
+
+    /** data-url for snapshot */
+    snapshot: string,
+
+    time: number
 }
 
-export default function Note({ onDelete, onEdit, snapshot, time, note }: NoteProps) {
-    const snapshotRef = useRef<HTMLCanvasElement>();
-    const [noteMode, setNoteMode] = React.useState(NoteMode.Viewing);
-    const [tempNoteValue, setTempNoteValue] = React.useState(note);
+export default function Note({ onDelete, onEdit, note, snapshot, time }: NoteProps) {
+    const [noteMode, setNoteMode] = useState(NoteMode.Viewing);
+    const [tempNoteValue, setTempNoteValue] = useState(note);
 
     const editingKeydownHandler = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -37,24 +42,14 @@ export default function Note({ onDelete, onEdit, snapshot, time, note }: NotePro
     };
 
     useEffect(() => {
-        if (noteMode === NoteMode.Editing)
+        if (noteMode === NoteMode.Editing) {
             document.addEventListener('keydown', editingKeydownHandler);
-        else
-            document.removeEventListener('keydown', editingKeydownHandler);
-    }, [noteMode]);
 
-    useEffect(() => {
-        if (snapshotRef.current) {
-            const canvas = snapshotRef.current;
-            const context = canvas.getContext('2d');
-            const snapshotData = new ImageData(
-                new Uint8ClampedArray(JSON.parse(snapshot)),
-                SNAPSHOT_WIDTH
-            );
-
-            context.putImageData(snapshotData, 0, 0);
+            return () => {
+                document.removeEventListener('keydown', editingKeydownHandler)
+            };
         }
-    }, [snapshotRef.current]);
+    }, [noteMode]);
 
     const parsedMarkdown = marked.parse(note);
 
@@ -76,7 +71,7 @@ export default function Note({ onDelete, onEdit, snapshot, time, note }: NotePro
     );
 
     const noteContent = noteMode === NoteMode.Editing ? (
-        <div class="mt-1">
+        <div className="mt-1">
             <textarea
                 autoFocus
                 className="w-100"
@@ -102,8 +97,8 @@ export default function Note({ onDelete, onEdit, snapshot, time, note }: NotePro
     );
 
     return (
-        <div className="note flex my-2">
-            <canvas className="note-snapshot" width={SNAPSHOT_WIDTH} ref={snapshotRef}></canvas>
+        <div className="note flex my-3">
+            <img className="note-snapshot" src={snapshot} width={SNAPSHOT_WIDTH} />
             <div className="ml-2" style={{ flexGrow: 1 }}>
                 <div className="flex" style={{ justifyContent: "space-between" }}>
                     <span onClick={() => {

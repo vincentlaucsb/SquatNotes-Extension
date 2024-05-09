@@ -15,6 +15,8 @@ import Sidebar from "./Sidebar";
     root.render(<Sidebar />);
 
     let currentUrl = window.location.href;
+
+    // TODO: Make this more professional...
     setInterval(() => {
         if (currentUrl !== window.location.href) {
             currentUrl = window.location.href;

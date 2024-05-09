@@ -1,28 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { formatTime, SNAPSHOT_WIDTH } from './util';
+import { getSnapshotData, getSnapshotHeight } from './snapshots';
 
-export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }) {
+type FormProps = {
+    addNote: (note: string, snapshot: string) => void,
+    currentTime: number,
+    startTakingNotes: () => void,
+    stopTakingNotes: () => void
+};
+
+export default function Form({ addNote, currentTime, startTakingNotes, stopTakingNotes }: FormProps) {
     const [value, setValue] = useState("");
-    const canvasRef = useRef();
-    const videoSnapshot = useRef();
+    const canvasRef = useRef<HTMLCanvasElement>();
+    const videoSnapshot = useRef<string>();
+
+    // TODO: Make method of finding video more robust
     const video = document.getElementsByTagName("video")[0];
+    const snapshotHeight = getSnapshotHeight(video);
 
     useEffect(() => {
         if (!(currentTime > 0)) {
             setValue("");
         }
         else {
-            const aspectRatio = video.videoWidth / video.videoHeight;
-            const snapshotHeight = SNAPSHOT_WIDTH / aspectRatio;
-
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, SNAPSHOT_WIDTH, snapshotHeight);
-
-            const frameData = context.getImageData(0, 0, SNAPSHOT_WIDTH, snapshotHeight).data;
-            videoSnapshot.current = frameData;
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            videoSnapshot.current = getSnapshotData(video, canvasRef.current);
         }
     }, [currentTime]);
 
@@ -41,7 +42,7 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
 
     return (
         <div id="add-note" className="mt-2">
-            <canvas id="squatnotes-canvas" ref={canvasRef} style={{
+            <canvas id="squatnotes-canvas" width={SNAPSHOT_WIDTH} height={snapshotHeight} ref={canvasRef} style={{
                 display: "none"
             }}></canvas>
             {

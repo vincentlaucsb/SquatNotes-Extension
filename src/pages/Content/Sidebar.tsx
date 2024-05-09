@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import Note from './Note';
 import Form from './Form';
 import NotebookPicker from './NotebookPicker';
-import ThemeCSS, { Theme } from './Theme';
+import ThemeCSS, { Theme, ThemeStore } from './Theme';
 
 import "./Content.scss";
 
@@ -30,6 +30,7 @@ export default class Sidebar extends Component {
         this.addNote = this.addNote.bind(this);
     }
 
+    // TODO: Make method of finding video more robust
     get currentVideo() {
         const ret = document.getElementsByTagName("video")[0];
         return ret?.getAttribute("src") ? ret : null;
@@ -75,11 +76,6 @@ export default class Sidebar extends Component {
             }
         });
 
-        // Load Theme
-        chrome.storage.local.get("theme").then((result) => {
-            this.setState({ theme: result["theme"] || "light" });
-        });
-
         // Load Notes
         chrome.storage.local.get(this.noteStorageKey).then((result) => {
             this.setState({ notes: result[this.noteStorageKey]?.notes || [] });
@@ -88,15 +84,13 @@ export default class Sidebar extends Component {
         this.loadNotebooks();
     }
 
-    addNote(note: string, snapshot: Uint8ClampedArray) {
-        const snapshotJson = JSON.stringify(Array.from(snapshot));
-
+    addNote(note: string, snapshot: string) {
         const notes = [
             // prevent notes with duplicate timestamps
             ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
 
             // add current note
-            { note, snapshot: snapshotJson, time: this.state.currentTime }
+            { note, snapshot, time: this.state.currentTime }
         ];
 
         notes.sort((a, b) => {
@@ -104,7 +98,6 @@ export default class Sidebar extends Component {
             else return a.time === b.time ? 0 : -1;
         });
 
-        console.log(notes);
         this.setState({ currentTime: NaN, notes }, this.persistNotes);
     }
 
@@ -191,11 +184,7 @@ export default class Sidebar extends Component {
                         <h1>Notes</h1>
                         <div>
                             <button id="theme-toggler" onClick={() => {
-                                const newTheme = this.state.theme === Theme.Dark ? Theme.Light : Theme.Dark;
-                                this.setState({ theme: newTheme });
-                                chrome.storage.local.set({
-                                    theme: newTheme
-                                });
+                                ThemeStore.toggleTheme();
                             }} title="Click to change theme">
                                 {this.state.theme === Theme.Dark ?
                                     <img src={chrome.runtime.getURL("moon.png")} alt="Dark Theme" /> :
