@@ -1,58 +1,9 @@
 // @ts-nocheck
 // TODO: Remove abov
 
-import { useSyncExternalStore } from "react";
-
-export enum Theme {
-    Light = 0,
-    Dark
-}
-
-class ThemeStoreImpl {
-    theme: string = "light";
-    listeners: (() => void)[] = [];
-
-    constructor() {
-        this.getTheme();
-    }
-
-    // TODO: Get accurate type for listener
-    subscribe = (listener: () => void) => {
-        this.listeners = [...this.listeners, listener];
-
-        return () => {
-            this.listeners = this.listeners.filter(l => l !== listener);
-        };
-    }
-
-    getSnapshot = () => {
-        return this.theme;
-    }
-
-    toggleTheme = () => {
-        const newTheme = this.theme === Theme.Dark ?
-            Theme.Light : Theme.Dark;
-
-        this.theme = newTheme;
-        chrome.storage.local.set({ "theme": newTheme });
-
-        this.emitChange();
-    }
-
-    private emitChange() {
-        for (let listener of this.listeners) {
-            listener();
-        }
-    }
-
-    private getTheme() {
-        chrome.storage.local.get("theme").then((result) => {
-            this.theme = result["theme"] || "light";
-        });
-    }
-}
-
-export const ThemeStore = new ThemeStoreImpl();
+import React, { useSyncExternalStore } from "react";
+import { Theme } from "./enums";
+import { ThemeStore } from "./dataStores";
 
 // TODO: Refactor into a hook once <Sidebar /> is a FC
 export default function ThemeCSS() {
@@ -73,4 +24,19 @@ export default function ThemeCSS() {
     }
 
     return null;
+}
+
+export function ThemeToggler() {
+    const theme = useSyncExternalStore(ThemeStore.subscribe, ThemeStore.getSnapshot);
+
+    return (
+        <button id="theme-toggler" onClick={() => {
+            ThemeStore.toggleTheme();
+        }} title="Click to change theme">
+            {theme === Theme.Dark ?
+                <img src={chrome.runtime.getURL("moon.png")} alt="Dark Theme" /> :
+                <img src={chrome.runtime.getURL("sun-high.png")} alt="Light Theme" />
+            }
+        </button>
+    );
 }

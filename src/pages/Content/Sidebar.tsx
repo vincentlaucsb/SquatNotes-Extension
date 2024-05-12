@@ -6,9 +6,37 @@ import React, { Component } from 'react';
 import Note from './Note';
 import Form from './Form';
 import NotebookPicker from './NotebookPicker';
-import ThemeCSS, { Theme, ThemeStore } from './Theme';
+import ThemeCSS, { ThemeToggler } from './Theme';
 
 import "./Content.scss";
+import { NotebookStore, useNotebooks } from './dataStores';
+
+function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
+    const notebooks = useNotebooks();
+
+    return notebooks?.length > 0 ? (
+        <div className="flex">
+            <NotebookPicker
+                disabled={!selectedNotebook}
+                notebooks={notebooks}
+                onSelectNotebook={onSelectNotebook}
+                saveNote={saveNote}
+                selectedNotebook={selectedNotebook}
+            />
+        </div>) : (
+        <p>
+            It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
+            <button className="btn btn-primary mt-2" onClick={() => NotebookStore.load()}>
+                <img
+                    className="button-icon"
+                    src={chrome.runtime.getURL("reload.png")}
+                    alt="Reload"
+                />
+                Reload
+            </button>
+        </p>
+    );
+}
 
 export default class Sidebar extends Component {
     constructor(props) {
@@ -21,10 +49,8 @@ export default class Sidebar extends Component {
             isSavingNote: false,
             isVisible: false,
             messages: [],
-            notebooks: [],
             notes: [],
-            selectedNotebook: null,
-            theme: "light"
+            selectedNotebook: null
         };
 
         this.addNote = this.addNote.bind(this);
@@ -121,14 +147,6 @@ export default class Sidebar extends Component {
 
     loadNotebooks() {
         chrome.runtime.sendMessage({
-            contentScriptQuery: "getNotebooks"
-        }).then((notebooks) => {
-            this.setState({ notebooks });
-        }).catch(() => {
-            this.setState({ notebooks: null });
-        });
-
-        chrome.runtime.sendMessage({
             contentScriptQuery: "getFrontendPort"
         }).then((port) => {
             this.setState({ frontendPort: port });
@@ -175,7 +193,7 @@ export default class Sidebar extends Component {
     render() {
         return (
             <>
-                <ThemeCSS theme={this.state.theme} />
+                <ThemeCSS />
                 <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
                     <div className="flex" style={{
                         alignItems: "center",
@@ -183,14 +201,7 @@ export default class Sidebar extends Component {
                     }}>
                         <h1>Notes</h1>
                         <div>
-                            <button id="theme-toggler" onClick={() => {
-                                ThemeStore.toggleTheme();
-                            }} title="Click to change theme">
-                                {this.state.theme === Theme.Dark ?
-                                    <img src={chrome.runtime.getURL("moon.png")} alt="Dark Theme" /> :
-                                    <img src={chrome.runtime.getURL("sun-high.png")} alt="Light Theme" />
-                                }
-                            </button>
+                            <ThemeToggler />
                         </div>
                     </div>
                     {this.renderPanelContents()}
@@ -255,31 +266,19 @@ export default class Sidebar extends Component {
                 />
                 <div id="save-note" className="mt-4">
                     <h2>Save Note</h2>
-                    {this.state.notebooks?.length > 0 ? (
-                        <div className="flex">
-                            <NotebookPicker
-                                disabled={!this.state.selectedNotebook}
-                                notebooks={this.state.notebooks}
-                                onSelectNotebook={(value) => this.setState({
-                                    selectedNotebook: value
-                                })}
-                                saveNote={() => {
-                                    this.saveNotes().then((response) => {
-                                        return response.links.find(link => link.rel === "self");
-                                    }).then((progressLink) => {
-                                        this.updateProgress(progressLink);
-                                    });
-                                }}
-                                selectedNotebook={this.state.selectedNotebook}
-                            />
-                        </div>) : (
-                        <p>
-                            It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
-                            <button className="btn btn-primary mt-2" onClick={() => this.loadNotebooks()}>
-                                <img className="button-icon" src={chrome.runtime.getURL("reload.png")} alt="Reload" /> Reload
-                            </button>
-                        </p>
-                    )}
+                    <DesktopIntegration
+                        onSelectNotebook={(value) => this.setState({
+                            selectedNotebook: value
+                        })}
+                        saveNote={() => {
+                            this.saveNotes().then((response) => {
+                                return response.links.find(link => link.rel === "self");
+                            }).then((progressLink) => {
+                                this.updateProgress(progressLink);
+                            });
+                        }}
+                        selectedNotebook={this.state.selectedNotebook}
+                    />
                     <div>
                         <button className="btn btn-secondary mt-3" onClick={() => {
                             if (confirm("Are you sure you want to delete your notes for this video?")) {
