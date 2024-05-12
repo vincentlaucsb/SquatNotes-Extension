@@ -6,10 +6,11 @@ import React, { Component } from 'react';
 import Note from './Note';
 import Form from './Form';
 import NotebookPicker from './NotebookPicker';
-import ThemeCSS, { ThemeToggler } from './Theme';
+import useThemeStyle, { ThemeToggler } from '../Theme';
 
 import "./Content.scss";
 import { NotebookStore, useNotebooks } from './dataStores';
+import getVideo from '../getVideo';
 
 function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
     const notebooks = useNotebooks();
@@ -38,6 +39,10 @@ function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
     );
 }
 
+function ThemeCSS() {
+    return useThemeStyle();
+}
+
 export default class Sidebar extends Component {
     constructor(props) {
         super(props);
@@ -56,10 +61,8 @@ export default class Sidebar extends Component {
         this.addNote = this.addNote.bind(this);
     }
 
-    // TODO: Make method of finding video more robust
     get currentVideo() {
-        const ret = document.getElementsByTagName("video")[0];
-        return ret?.getAttribute("src") ? ret : null;
+        return getVideo();
     }
 
     get noteStorageKey() {

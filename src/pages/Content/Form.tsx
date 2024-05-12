@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { formatTime, SNAPSHOT_WIDTH } from './util';
 import { getSnapshotData, getSnapshotHeight } from './snapshots';
+import getVideo from '../getVideo';
 
 type FormProps = {
     addNote: (note: string, snapshot: string) => void,
@@ -14,8 +15,7 @@ export default function Form({ addNote, currentTime, startTakingNotes, stopTakin
     const canvasRef = useRef<HTMLCanvasElement>();
     const videoSnapshot = useRef<string>();
 
-    // TODO: Make method of finding video more robust
-    const video = document.getElementsByTagName("video")[0];
+    const video = getVideo();
     const snapshotHeight = getSnapshotHeight(video);
 
     useEffect(() => {

@@ -1,7 +1,10 @@
 import React from 'react';
 import './Popup.scss';
+import useThemeStyle from '../Theme';
 
-const Popup = () => {
+function Popup() {
+  useThemeStyle();
+
   let [data, setData] = React.useState({});
   let videoURLs = [];
   for (let key of Object.keys(data)) {
