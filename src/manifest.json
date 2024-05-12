@@ -20,7 +20,8 @@
     {
       "matches": [
         "https://*.youtube.com/*",
-        "https://*.rumble.com/*"
+        "https://*.rumble.com/*",
+        "https://*.vimeo.com/*"
       ],
       "js": [
         "contentScript.bundle.js"
@@ -31,7 +32,8 @@
   "externally_connectable": {
     "matches": [
       "https://*.youtube.com/*",
-      "https://*.rumble.com/*"
+      "https://*.rumble.com/*",
+      "https://*.vimeo.com/*"
     ],
     "accepts_tls_channel_id": false
   },
