@@ -36,7 +36,9 @@ function Popup() {
       <p class="mt-2">Whenever you take notes on a video without saving, they will be listed here for you to come back to.</p>
       <h2 class="mt-3">Shortcuts</h2>
       <p>
-        Press <strong>Ctrl + S</strong> on <a href="https://www.youtube.com">YouTube</a> or <a href="https://www.rumble.com">Rumble</a> to take notes
+        Press <strong>Ctrl + S</strong> on&nbsp;
+        <a href="https://www.youtube.com" target="_blank">YouTube</a> or&nbsp;
+        <a href="https://www.rumble.com" target="_blank">Rumble</a> to take notes
       </p>
     </div>
   );

@@ -41,6 +41,11 @@ export default function Note({ onDelete, onEdit, note, snapshot, time }: NotePro
         setTempNoteValue(tempNoteValue);
     };
 
+    const setVideoTime = () => {
+        const currentVideo = document.getElementsByTagName("video")[0];
+        currentVideo.currentTime = time;
+    };
+
     useEffect(() => {
         if (noteMode === NoteMode.Editing) {
             document.addEventListener('keydown', editingKeydownHandler);
@@ -98,13 +103,16 @@ export default function Note({ onDelete, onEdit, note, snapshot, time }: NotePro
 
     return (
         <div className="note flex my-3">
-            <img className="note-snapshot" src={snapshot} width={SNAPSHOT_WIDTH} />
+            <img
+                className="note-snapshot"
+                onClick={() => setVideoTime()}
+                style={{ cursor: "pointer" }}
+                src={snapshot}
+                width={SNAPSHOT_WIDTH}
+            />
             <div className="ml-2" style={{ flexGrow: 1 }}>
                 <div className="flex" style={{ justifyContent: "space-between" }}>
-                    <span onClick={() => {
-                        const currentVideo = document.getElementsByTagName("video")[0];
-                        currentVideo.currentTime = time;
-                    }} style={{ cursor: "pointer", fontWeight: "bold" }}>{formatTime(time)}</span>
+                    <span onClick={() => setVideoTime()} style={{ cursor: "pointer", fontWeight: "bold" }}>{formatTime(time)}</span>
 
                     <div className="flex note-controls">
                         <button onClick={() => setNoteMode(NoteMode.Editing)}>
