@@ -4,6 +4,12 @@
 
 The SquatNotes Browser Extension is a companion to the [SquatNotes desktop app](https://www.vincela.com/squatnotes/) which allows you to take notes while browsing the web, and then save them when you are ready.
 
+## Features
+
+This is intended to work with the SquatNotes desktop app. Please [download it](https://www.vincela.com/squatnotes/) if you haven't already.
+
+This extension allows you to take notes while watching videos on sites such as YouTube and Rumble (more sites to come) and then save them locally. You may then use the SquatNotes desktop app to take further notes, or export your notes to HTML or PDF.
+
 ## Installing
 
 SquatNotes is compatible with Chrome and Chrome-like browsers (such as Brave or Edge).
