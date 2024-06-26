@@ -1,10 +1,10 @@
 {
   "name": "squatnotes-extension",
-  "version": "2023.10.26",
+  "version": "2024.6.25",
   "description": "SquatNotes Chrome Extension",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
+    "url": "https://github.com/vincentlaucsb/SquatNotes-Extension.git"
   },
   "scripts": {
     "build": "node utils/build.js",

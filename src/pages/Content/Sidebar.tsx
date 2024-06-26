@@ -25,8 +25,15 @@ function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
                 selectedNotebook={selectedNotebook}
             />
         </div>) : (
-        <p>
-            It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
+        <div>
+            <p>
+                It appears SquatNotes is not running. In order to save your notes, launch SquatNotes and hit the <strong>Reload</strong> button below.
+            </p>
+            <br />
+            <p>
+                If you do not have SquatNotes installed, you can download the demo version
+                <a href="https://www.squatnotes.com/">by clicking here</a>.
+            </p>
             <button className="btn btn-primary mt-2" onClick={() => NotebookStore.load()}>
                 <img
                     className="button-icon"
@@ -35,7 +42,7 @@ function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
                 />
                 Reload
             </button>
-        </p>
+        </div>
     );
 }
 
