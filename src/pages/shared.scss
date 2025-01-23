@@ -38,6 +38,8 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
     --secondary-lightness: 48.431372549%;
     --secondary-text: #ffffff;
 
+    color: var(--squatnotes-color);
+
     a {
         color: var(--squatnotes-link-color);
         text-decoration: none;
@@ -112,7 +114,6 @@ $spacing-levels: 0, 1, 2, 3, 4, 5, 6, 7;
 #squatnotes {
     background: var(--squatnotes-background);
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 40px;
-    color: var(--squatnotes-color);
     min-height: 400px;
     padding: var(--spacing-3);
     font-size: var(--root-font-size);

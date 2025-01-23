@@ -13,6 +13,10 @@ import { NotebookStore, useNotebooks } from './dataStores';
 import getVideo from '../getVideo';
 
 function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
+    const clickHere = (
+        <a href="https://www.squatnotes.com/">by clicking here</a>
+    );
+
     const notebooks = useNotebooks();
 
     return notebooks?.length > 0 ? (
@@ -31,8 +35,7 @@ function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
             </p>
             <br />
             <p>
-                If you do not have SquatNotes installed, you can download the demo version
-                <a href="https://www.squatnotes.com/">by clicking here</a>.
+                If you do not have SquatNotes installed, you can download the demo version {clickHere}.
             </p>
             <button className="btn btn-primary mt-2" onClick={() => NotebookStore.load()}>
                 <img

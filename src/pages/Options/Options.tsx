@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './Options.scss';
+import useThemeStyle from '../Theme';
 
 interface Props {
   title: string;
 }
 
 const Options: React.FC<Props> = ({ title }: Props) => {
+  useThemeStyle();
+
   let [notesHotkey, setNotesHotkey] = useState<any>(null);
 
   useEffect(() => {
     chrome.storage.local.get("notes-hotkey").then((result) => {
-      console.log("Hotkey", result["notes-hotkey"]);
       setNotesHotkey(result["notes-hotkey"] || "S");
     });
   }, []);

@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
                 break;
 
             case "getNotebooks":
-                requestUrl = BACKEND_URL;
+                requestUrl = `${BACKEND_URL}settings`;
 
                 fetch(requestUrl)
                     .then(response => response.json())
