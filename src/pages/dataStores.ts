@@ -31,14 +31,18 @@ const ThemeStore = new class extends BaseStore {
         return this.theme;
     }
 
-    toggleTheme = () => {
-        const newTheme = this.theme === Theme.Dark ?
-            Theme.Light : Theme.Dark;
-
+    setTheme = (newTheme: Theme) => {
         this.theme = newTheme;
         chrome.storage.local.set({ "theme": newTheme });
 
         this.emitChange();
+    };
+
+    toggleTheme = () => {
+        const newTheme = this.theme === Theme.Dark ?
+            Theme.Light : Theme.Dark;
+
+        this.setTheme(newTheme);
     }
 
     private getTheme() {

@@ -1,7 +1,4 @@
-// @ts-nocheck
-// TODO: Remove above
-
-import React, { Component } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import Note from './Note';
 import Form from './Form';
@@ -9,10 +6,35 @@ import NotebookPicker from './NotebookPicker';
 import useThemeStyle, { ThemeToggler } from '../Theme';
 
 import "./Content.scss";
+import { AppCommands, MESSAGE_TYPE } from './communication';
 import { NotebookStore, useNotebooks } from './dataStores';
 import getVideo from '../getVideo';
+import { ThemeStore } from '../dataStores';
 
-function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
+const noteStorageKey = `notes-${window.location.href}`;
+
+declare global {
+    interface Window {
+        initiateWPFMode: () => void;
+
+        /** Toggle the sidebar */
+        toggleSquatNotesVisibility: () => void;
+    }
+}
+
+async function deleteNotes() {
+    return chrome.storage.local.remove(noteStorageKey);
+}
+
+function DesktopIntegration({
+    onSelectNotebook,
+    saveNote,
+    selectedNotebook
+}: {
+    onSelectNotebook: (notebook: string) => void,
+    saveNote: any,
+    selectedNotebook: string
+}) {
     const clickHere = (
         <a href="https://www.squatnotes.com/">by clicking here</a>
     );
@@ -50,60 +72,58 @@ function DesktopIntegration({ onSelectNotebook, saveNote, selectedNotebook }) {
 }
 
 function ThemeCSS() {
-    return useThemeStyle();
+    useThemeStyle();
+    return (<></>);
 }
 
-export default class Sidebar extends Component {
-    constructor(props) {
-        super(props);
+export default function Sidebar() {
+    const [currentTime, setCurrentTime] = useState(NaN);
+    const [frontendPort, setFrontendPort] = useState(-1);
+    const [finishedVideoId, setFinishedVideoId] = useState<number | null>(null);
+    const [isSavingNote, setIsSavingNote] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [messages, setMessages] = useState<any[]>([]);
+    const [notes, setNotes] = useState([]);
+    const [selectedNotebook, setSelectedNotebook] = useState<string | null>(null);
 
-        this.state = {
-            currentTime: NaN,
-            frontendPort: -1,
-            finishedVideoId: null,
-            isSavingNote: false,
-            isVisible: false,
-            messages: [],
-            notes: [],
-            selectedNotebook: null
-        };
+    const currentVideo = getVideo();
 
-        this.addNote = this.addNote.bind(this);
-    }
+    const toggleVisibility = () => setIsVisible(value => !value);
 
-    get currentVideo() {
-        return getVideo();
-    }
+    useEffect(() => {
+        window.toggleSquatNotesVisibility = toggleVisibility;
 
-    get noteStorageKey() {
-        return `notes-${window.location.href}`;
-    }
+        window.addEventListener('message', function (event) {
+            if (event.data.type !== MESSAGE_TYPE)
+                return;
 
-    componentDidMount() {
+            switch (event.data.command as AppCommands) {
+                case 'setTheme':
+                    ThemeStore.setTheme(event.data.data);
+                    break;
+
+                case 'toggle':
+                    this.window.toggleSquatNotesVisibility();
+                    break;
+            }
+        }, false);
+
         document.body.addEventListener("keydown", (e) => {
             let isSquatNotesCmd = false;
 
             if (e.ctrlKey && e.key === 's') {
-                this.setState({
-                    isVisible: !this.state.isVisible
-                });
+                toggleVisibility();
 
                 isSquatNotesCmd = true;
             }
 
-            if (this.state.isVisible) {
+            if (isVisible) {
                 if (e.ctrlKey && e.key === ' ') {
-                    this.setState({
-                        currentTime: this.currentVideo.currentTime
-                    });
-
+                    setCurrentTime(currentVideo.currentTime);
                     isSquatNotesCmd = true;
                 }
                 else if (e.key === 'Escape') {
-                    this.setState({
-                        currentTime: null
-                    });
-
+                    setCurrentTime(NaN);
                     isSquatNotesCmd = true;
                 }
             }
@@ -116,59 +136,60 @@ export default class Sidebar extends Component {
         });
 
         // Load Notes
-        chrome.storage.local.get(this.noteStorageKey).then((result) => {
-            this.setState({ notes: result[this.noteStorageKey]?.notes || [] });
+        chrome.storage.local.get(noteStorageKey).then((result) => {
+            setNotes(result[noteStorageKey]?.notes);
         });
 
-        this.loadNotebooks();
-    }
+        loadNotebooks();
+    }, []);
 
-    addNote(note: string, snapshot: string) {
-        const notes = [
+    const addNote = (note: string, snapshot: string) => {
+        console.log("Notes", notes);
+
+        const nextNotes = [
             // prevent notes with duplicate timestamps
-            ...this.state.notes.filter(_ => _.time !== this.state.currentTime),
+            ...notes.filter(_ => _.time !== currentTime),
 
             // add current note
-            { note, snapshot, time: this.state.currentTime }
+            { note, snapshot, time: currentTime }
         ];
 
-        notes.sort((a, b) => {
+        nextNotes.sort((a, b) => {
             if (a.time > b.time) return 1;
             else return a.time === b.time ? 0 : -1;
         });
 
-        this.setState({ currentTime: NaN, notes }, this.persistNotes);
+        setCurrentTime(NaN);
+        setNotes(nextNotes);
+        persistNotes(nextNotes);
     }
 
-    editNote(time: number, note: string) {
-        const notes = [...this.state.notes];
-        const noteToUpdate = notes.find((note) => note.time === time);
+    const editNote = (time: number, note: string) => {
+        const nextNotes = [...notes];
+        const noteToUpdate = nextNotes.find((note) => note.time === time);
         noteToUpdate.note = note;
 
-        this.setState({ notes }, this.persistNotes);
+        setNotes(nextNotes);
+        persistNotes(nextNotes);
     }
 
-    deleteNote(time: number) {
-        this.setState({
-            notes: this.state.notes.filter(_ => _.time != time)
-        }, this.persistNotes);
+    const deleteNote = (time: number) => {
+        const nextNotes = notes.filter(_ => _.time != time);
+        setNotes(nextNotes);
+        persistNotes(nextNotes);
     }
 
-    async deleteNotes() {
-        return chrome.storage.local.remove(this.noteStorageKey);
-    }
-
-    loadNotebooks() {
+    const loadNotebooks = () => {
         chrome.runtime.sendMessage({
             contentScriptQuery: "getFrontendPort"
         }).then((port) => {
-            this.setState({ frontendPort: port });
+            setFrontendPort(port);
         }).catch(() => {
 
         });
     }
 
-    persistNotes() {
+    const persistNotes = (notes: any[]) => {
         let title = document.title;
 
         // Remove notification count from title
@@ -179,155 +200,202 @@ export default class Sidebar extends Component {
         }
 
         let items = {};
-        items[this.noteStorageKey] = {
+        items[noteStorageKey] = {
             url: window.location.href,
-            notes: this.state.notes,
+            notes,
             title
         };
 
         chrome.storage.local.set(items);
     }
 
-    saveNotes() {
-        this.setState({ isSavingNote: true });
+    const saveNotes = () => {
+        setIsSavingNote(true);
 
-        const notes = this.state.notes.map(({ time, note }) => {
+        const nextNotes = notes.map(({ time, note }) => {
             return { time, note };
         });
 
         return chrome.runtime.sendMessage({
             contentScriptQuery: "saveNotes",
-            notes: JSON.stringify({ notes: notes }),
-            notebook: this.state.selectedNotebook,
+            notes: JSON.stringify({ notes: nextNotes }),
+            notebook: selectedNotebook,
             videoURL: window.location.href
         });
     }
 
-    render() {
-        return (
-            <>
-                <ThemeCSS />
-                <div id="squatnotes" className={this.state.isVisible ? "flex" : "none"}>
-                    <div className="flex" style={{
-                        alignItems: "center",
-                        justifyContent: "space-between"
-                    }}>
-                        <h1>Notes</h1>
-                        <div>
-                            <ThemeToggler />
-                        </div>
-                    </div>
-                    {this.renderPanelContents()}
-                </div>
-            </>
-        );
-    }
-
-    renderPanelContents() {
-        if (!this.currentVideo) {
-            return <p>There are no videos detected on this page.</p>
-        }
-
-        if (this.state.finishedVideoId) {
-            return <a href={`http://localhost:${this.state.frontendPort}#/${this.state.selectedNotebook}/notes/${this.state.finishedVideoId}`}>Note saved</a>
-        }
-
-        if (this.state.isSavingNote) {
-            return (
-                <>
-                    <p>Saving...</p>
-
-                    <h2 className="mt-2">Progress</h2>
-                    <pre style={{ overflow: "auto" }}>
-                        {this.state.messages.map((msg) => {
-                            return (
-                                <>{msg.message}<br /></>
-                            );
-                        })}
-                    </pre>
-                </>
-            );
-        }
-
-        return (
-            <>
-                <div className="pr-2" style={{ overflowY: "auto" }}>
-                    {this.state.notes?.length > 0 ? this.state.notes.map(({ note, snapshot, time }) => {
-                        return (
-                            <Note
-                                key={time}
-                                onEdit={(note) => this.editNote(time, note)}
-                                onDelete={() => this.deleteNote(time)}
-                                time={time}
-                                snapshot={snapshot}
-                                note={note}
-                            />
-                        );
-                    }) : <p>There are no notes on this video. Once you start taking notes, they will be
-                        displayed here.</p>}
-                </div>
-                <Form addNote={this.addNote}
-                    currentTime={this.state.currentTime}
-                    startTakingNotes={() => {
-                        this.setState({
-                            currentTime: document.getElementsByTagName("video")[0].currentTime
-                        });
-                    }}
-                    stopTakingNotes={() => {
-                        this.setState({ currentTime: null });
-                    }}
-                />
-                <div id="save-note" className="mt-4">
-                    <h2>Save Note</h2>
-                    <DesktopIntegration
-                        onSelectNotebook={(value) => this.setState({
-                            selectedNotebook: value
-                        })}
-                        saveNote={() => {
-                            this.saveNotes().then((response) => {
-                                return response.links.find(link => link.rel === "self");
-                            }).then((progressLink) => {
-                                this.updateProgress(progressLink);
-                            });
-                        }}
-                        selectedNotebook={this.state.selectedNotebook}
-                    />
-                    <div>
-                        <button className="btn btn-secondary mt-3" onClick={() => {
-                            if (confirm("Are you sure you want to delete your notes for this video?")) {
-                                this.deleteNotes().then(() => {
-                                    this.setState({ notes: [] });
-                                });
-                            }
-                        }}>
-                            <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" /> Delete Note
-                        </button>
-                    </div>
-                </div>
-            </>
-        );
-    }
-
-    updateProgress(progressLink) {
+    // TODO: Get rid of any
+    const updateProgress = (progressLink: any) => {
         chrome.runtime.sendMessage({
             contentScriptQuery: "getProgress",
             url: progressLink.href
         }).then((data) => {
-            this.setState({ messages: [...this.state.messages, ...data.messages] })
+            setMessages(messages => [...messages, ...data.messages]);
 
             if (!data.finished) {
                 setTimeout(() => {
-                    this.updateProgress(progressLink);
+                    updateProgress(progressLink);
                 }, 500);
             }
             else {
-                this.deleteNotes().then(() => {
-                    this.setState({
-                        finishedVideoId: data.videoId,
-                        notes: []
-                    });
+                deleteNotes().then(() => {
+                    setFinishedVideoId(data.videoId);
+                    setNotes([]);
                 });
             }
         });
     }
+
+    return (
+        <>
+            <ThemeCSS />
+            <div id="squatnotes" className={isVisible ? "flex" : "none"}>
+                <div className="flex" style={{
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}>
+                    <h1>Notes</h1>
+                    <div>
+                        <ThemeToggler />
+                    </div>
+                </div>
+                <SidebarContents
+                    {... {
+                        addNote,
+                        currentTime,
+                        currentVideo,
+                        editNote,
+                        deleteNote,
+                        finishedVideoId,
+                        frontendPort,
+                        messages,
+                        notes,
+                        isSavingNote,
+                        saveNotes,
+                        setNotes,
+                        selectedNotebook,
+                        setCurrentTime,
+                        setSelectedNotebook,
+                        updateProgress
+                    }}
+                />
+            </div>
+        </>
+    );
+}
+
+interface SidebarContentProps {
+    addNote: (note: string, snapshot: string) => void;
+    editNote: (time: number, note: string) => void;
+    deleteNote: (time: number) => void;
+    saveNotes: () => Promise<any>;
+    setCurrentTime: (time: number) => void;
+    setNotes: (value: any[]) => void;
+    setSelectedNotebook: (selectedNotebook: string) => void;
+    updateProgress: (link: any) => void;
+
+    currentTime: number;
+    frontendPort: number;
+    messages: any[];
+    notes: any[];
+    isSavingNote: boolean;
+    selectedNotebook: string;
+
+    finishedVideoId?: number;
+}
+
+function SidebarContents({
+    addNote,
+    currentTime,
+    editNote,
+    deleteNote,
+    finishedVideoId,
+    frontendPort,
+    messages,
+    notes,
+    isSavingNote,
+    saveNotes,
+    setNotes,
+    selectedNotebook,
+    setCurrentTime,
+    setSelectedNotebook,
+    updateProgress
+}: SidebarContentProps) {
+    const currentVideo = useMemo(() => getVideo(), []);
+
+    if (!currentVideo) {
+        return <p>There are no videos detected on this page.</p>
+    }
+
+    if (finishedVideoId) {
+        return <a href={`http://localhost:${frontendPort}#/${selectedNotebook}/notes/${finishedVideoId}`}>Note saved</a>
+    }
+
+    if (isSavingNote) {
+        return (
+            <>
+                <p>Saving...</p>
+
+                <h2 className="mt-2">Progress</h2>
+                <pre style={{ overflow: "auto" }}>
+                    {messages.map((msg) => {
+                        return (
+                            <>{msg.message}<br /></>
+                        );
+                    })}
+                </pre>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <div className="pr-2" style={{ overflowY: "auto" }}>
+                {notes?.length > 0 ? notes.map(({ note, snapshot, time }) => {
+                    return (
+                        <Note
+                            key={time}
+                            onEdit={(note) => editNote(time, note)}
+                            onDelete={() => deleteNote(time)}
+                            time={time}
+                            snapshot={snapshot}
+                            note={note}
+                        />
+                    );
+                }) : <p>There are no notes on this video. Once you start taking notes, they will be
+                    displayed here.</p>}
+            </div>
+            <Form addNote={addNote} currentTime={currentTime}
+                startTakingNotes={() => {
+                    setCurrentTime(document.getElementsByTagName("video")[0].currentTime);
+                }}
+                stopTakingNotes={() => {
+                    setCurrentTime(NaN);
+                }}
+            />
+            <div id="save-note" className="mt-4">
+                <h2>Save Note</h2>
+                <DesktopIntegration
+                    onSelectNotebook={(value) => setSelectedNotebook(value)}
+                    saveNote={() => {
+                        saveNotes().then((response) => {
+                            return response.links.find(link => link.rel === "self");
+                        }).then((progressLink) => {
+                            updateProgress(progressLink);
+                        });
+                    }}
+                    selectedNotebook={selectedNotebook}
+                />
+                <div>
+                    <button className="btn btn-secondary mt-3" onClick={() => {
+                        if (confirm("Are you sure you want to delete your notes for this video?")) {
+                            deleteNotes().then(() => setNotes([]))
+                        }
+                    }}>
+                        <img className="button-icon" src={chrome.runtime.getURL("trash.png")} alt="Delete" /> Delete Note
+                    </button>
+                </div>
+            </div>
+        </>
+    );
 }
