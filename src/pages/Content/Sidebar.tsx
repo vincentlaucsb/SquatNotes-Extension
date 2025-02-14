@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Note from './Note';
 import Form from './Form';
@@ -6,12 +6,10 @@ import NotebookPicker from './NotebookPicker';
 import useThemeStyle, { ThemeToggler } from '../Theme';
 
 import "./Content.scss";
-import { AppCommands, MESSAGE_TYPE } from './communication';
 import { NotebookStore, useNotebooks } from './dataStores';
 import getVideo from '../getVideo';
-import { ThemeStore } from '../dataStores';
-
-const noteStorageKey = `notes-${window.location.href}`;
+import useNotes, { noteStorageKey } from './useNotes';
+import useMessaging from './useMessaging';
 
 declare global {
     interface Window {
@@ -23,7 +21,7 @@ declare global {
 }
 
 async function deleteNotes() {
-    return chrome.storage.local.remove(noteStorageKey);
+    return chrome.storage.local.remove(noteStorageKey());
 }
 
 function DesktopIntegration({
@@ -77,36 +75,25 @@ function ThemeCSS() {
 }
 
 export default function Sidebar() {
-    const [currentTime, setCurrentTime] = useState(NaN);
+    const {
+        currentTime, notes, addNote, deleteNote,
+        editNote, setCurrentTime, setNotes
+    } = useNotes([]);
     const [frontendPort, setFrontendPort] = useState(-1);
     const [finishedVideoId, setFinishedVideoId] = useState<number | null>(null);
     const [isSavingNote, setIsSavingNote] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
-    const [notes, setNotes] = useState([]);
     const [selectedNotebook, setSelectedNotebook] = useState<string | null>(null);
 
     const currentVideo = getVideo();
 
     const toggleVisibility = () => setIsVisible(value => !value);
 
+    useMessaging();
+
     useEffect(() => {
         window.toggleSquatNotesVisibility = toggleVisibility;
-
-        window.addEventListener('message', function (event) {
-            if (event.data.type !== MESSAGE_TYPE)
-                return;
-
-            switch (event.data.command as AppCommands) {
-                case 'setTheme':
-                    ThemeStore.setTheme(event.data.data);
-                    break;
-
-                case 'toggle':
-                    this.window.toggleSquatNotesVisibility();
-                    break;
-            }
-        }, false);
 
         document.body.addEventListener("keydown", (e) => {
             let isSquatNotesCmd = false;
@@ -136,48 +123,12 @@ export default function Sidebar() {
         });
 
         // Load Notes
-        chrome.storage.local.get(noteStorageKey).then((result) => {
-            setNotes(result[noteStorageKey]?.notes);
+        chrome.storage.local.get(noteStorageKey()).then((result) => {
+            setNotes(result[noteStorageKey()]?.notes || []);
         });
 
         loadNotebooks();
     }, []);
-
-    const addNote = (note: string, snapshot: string) => {
-        console.log("Notes", notes);
-
-        const nextNotes = [
-            // prevent notes with duplicate timestamps
-            ...notes.filter(_ => _.time !== currentTime),
-
-            // add current note
-            { note, snapshot, time: currentTime }
-        ];
-
-        nextNotes.sort((a, b) => {
-            if (a.time > b.time) return 1;
-            else return a.time === b.time ? 0 : -1;
-        });
-
-        setCurrentTime(NaN);
-        setNotes(nextNotes);
-        persistNotes(nextNotes);
-    }
-
-    const editNote = (time: number, note: string) => {
-        const nextNotes = [...notes];
-        const noteToUpdate = nextNotes.find((note) => note.time === time);
-        noteToUpdate.note = note;
-
-        setNotes(nextNotes);
-        persistNotes(nextNotes);
-    }
-
-    const deleteNote = (time: number) => {
-        const nextNotes = notes.filter(_ => _.time != time);
-        setNotes(nextNotes);
-        persistNotes(nextNotes);
-    }
 
     const loadNotebooks = () => {
         chrome.runtime.sendMessage({
@@ -187,26 +138,6 @@ export default function Sidebar() {
         }).catch(() => {
 
         });
-    }
-
-    const persistNotes = (notes: any[]) => {
-        let title = document.title;
-
-        // Remove notification count from title
-        if (window.location.href.includes("youtube.com")) {
-            let newTitle = title.split(' ');
-            newTitle.shift();
-            title = newTitle.join(' ');
-        }
-
-        let items = {};
-        items[noteStorageKey] = {
-            url: window.location.href,
-            notes,
-            title
-        };
-
-        chrome.storage.local.set(items);
     }
 
     const saveNotes = () => {
@@ -321,7 +252,7 @@ function SidebarContents({
     setSelectedNotebook,
     updateProgress
 }: SidebarContentProps) {
-    const currentVideo = useMemo(() => getVideo(), []);
+    const currentVideo = getVideo();
 
     if (!currentVideo) {
         return <p>There are no videos detected on this page.</p>

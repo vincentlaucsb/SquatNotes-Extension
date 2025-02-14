@@ -1,6 +1,8 @@
 import { SNAPSHOT_WIDTH } from './util';
 
-export function getSnapshotHeight(video: HTMLVideoElement, snapshotWidth: number = SNAPSHOT_WIDTH) {
+export function getSnapshotHeight(video: HTMLVideoElement | null, snapshotWidth: number = SNAPSHOT_WIDTH) {
+    if (!video) return 0;
+
     const aspectRatio = video.videoWidth / video.videoHeight;
     return snapshotWidth / aspectRatio;
 }
