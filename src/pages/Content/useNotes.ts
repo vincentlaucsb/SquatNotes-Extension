@@ -1,8 +1,16 @@
 import { useState } from "react";
 
-// TODO: Remove all query string params except v
 export function noteStorageKey() {
-    return `notes-${window.location.href}`;
+    let url = window.location.href;
+
+    // Strip out all query string parameters except v=
+    if (window.location.href.includes('www.youtube.com/watch?')) {
+        const [urlBase, queryStr] = window.location.href.split('?');
+        const v = queryStr.split('&').find(part => part.startsWith("v="))!;
+        url = urlBase + '?' + v;
+    }
+
+    return `notes-${url}`;
 };
 
 export default function useNotes(init: any[]) {

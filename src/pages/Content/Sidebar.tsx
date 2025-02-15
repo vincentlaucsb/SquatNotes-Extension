@@ -10,6 +10,7 @@ import { NotebookStore, useNotebooks } from './dataStores';
 import getVideo from '../getVideo';
 import useNotes, { noteStorageKey } from './useNotes';
 import useMessaging from './useMessaging';
+import { useStateRef } from './hooks';
 
 declare global {
     interface Window {
@@ -82,7 +83,7 @@ export default function Sidebar() {
     const [frontendPort, setFrontendPort] = useState(-1);
     const [finishedVideoId, setFinishedVideoId] = useState<number | null>(null);
     const [isSavingNote, setIsSavingNote] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible, isVisibleRef] = useStateRef(false);
     const [messages, setMessages] = useState<any[]>([]);
     const [selectedNotebook, setSelectedNotebook] = useState<string | null>(null);
 
@@ -100,11 +101,10 @@ export default function Sidebar() {
 
             if (e.ctrlKey && e.key === 's') {
                 toggleVisibility();
-
                 isSquatNotesCmd = true;
             }
 
-            if (isVisible) {
+            if (isVisibleRef.current) {
                 if (e.ctrlKey && e.key === ' ') {
                     setCurrentTime(currentVideo.currentTime);
                     isSquatNotesCmd = true;
