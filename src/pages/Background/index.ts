@@ -25,6 +25,17 @@ chrome.runtime.onMessage.addListener(
 
                 break;
 
+            case "getObsidianUrl":
+                requestUrl = `${BACKEND_URL}folders/${request.notebook}/videos/${request.videoId}/openInObsidian`;
+
+                fetch(requestUrl, {
+                    method: 'post'
+                }).then(async (response) => {
+                    return await response.text();
+                }).then(data => sendResponse(data));
+
+                break;
+
             case "getProgress":
                 requestUrl = request.url;
 

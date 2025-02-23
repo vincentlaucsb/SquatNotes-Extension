@@ -81,7 +81,10 @@ export default function Sidebar() {
         editNote, setCurrentTime, setNotes
     } = useNotes([]);
     const [frontendPort, setFrontendPort] = useState(-1);
-    const [finishedVideoId, setFinishedVideoId] = useState<number | null>(null);
+    const [finishedVideo, setFinishedVideo] = useState<{
+        isObsidian: boolean
+        videoId: number
+    } | null>(null);
     const [isSavingNote, setIsSavingNote] = useState(false);
     const [isVisible, setIsVisible, isVisibleRef] = useStateRef(false);
     const [messages, setMessages] = useState<any[]>([]);
@@ -170,7 +173,7 @@ export default function Sidebar() {
             }
             else {
                 deleteNotes().then(() => {
-                    setFinishedVideoId(data.videoId);
+                    setFinishedVideo(data);
                     setNotes([]);
                 });
             }
@@ -197,7 +200,7 @@ export default function Sidebar() {
                         currentVideo,
                         editNote,
                         deleteNote,
-                        finishedVideoId,
+                        finishedVideo,
                         frontendPort,
                         messages,
                         notes,
@@ -232,7 +235,10 @@ interface SidebarContentProps {
     isSavingNote: boolean;
     selectedNotebook: string;
 
-    finishedVideoId?: number;
+    finishedVideo?: {
+        isObsidian: boolean
+        videoId: number
+    };
 }
 
 function SidebarContents({
@@ -240,7 +246,7 @@ function SidebarContents({
     currentTime,
     editNote,
     deleteNote,
-    finishedVideoId,
+    finishedVideo,
     frontendPort,
     messages,
     notes,
@@ -258,8 +264,24 @@ function SidebarContents({
         return <p>There are no videos detected on this page.</p>
     }
 
-    if (finishedVideoId) {
-        return <a href={`http://localhost:${frontendPort}#/${selectedNotebook}/notes/${finishedVideoId}`}>Note saved</a>
+    if (finishedVideo) {
+        return (
+            <>
+                <h2 className="mt-2">Note Saved</h2>
+                <a href={`http://localhost:${frontendPort}#/${selectedNotebook}/notes/${finishedVideo.videoId}`}>Open in SquatNotes</a>
+                <button onClick={() => {
+                    chrome.runtime.sendMessage({
+                        contentScriptQuery: "getObsidianUrl",
+                        notebook: selectedNotebook,
+                        videoId: finishedVideo.videoId
+                    }).then((url) => {
+                        window.open(url);
+                    })
+                }}>
+                    Open in Obsidian
+                </button>
+            </>
+        );
     }
 
     if (isSavingNote) {
