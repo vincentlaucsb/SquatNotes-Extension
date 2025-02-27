@@ -268,18 +268,24 @@ function SidebarContents({
         return (
             <>
                 <h2 className="mt-2">Note Saved</h2>
-                <a href={`http://localhost:${frontendPort}#/${selectedNotebook}/notes/${finishedVideo.videoId}`}>Open in SquatNotes</a>
-                <button onClick={() => {
-                    chrome.runtime.sendMessage({
-                        contentScriptQuery: "getObsidianUrl",
-                        notebook: selectedNotebook,
-                        videoId: finishedVideo.videoId
-                    }).then((url) => {
-                        window.open(url);
-                    })
-                }}>
-                    Open in Obsidian
-                </button>
+                <div>
+                    <a className='btn btn-primary'
+                        href={`http://localhost:${frontendPort}#/${selectedNotebook}/notes/${finishedVideo.videoId}`}>
+                        Open in SquatNotes
+                    </a>
+                    <button className='btn btn-primary mt-2'
+                        onClick={() => {
+                            chrome.runtime.sendMessage({
+                                contentScriptQuery: "getObsidianUrl",
+                                notebook: selectedNotebook,
+                                videoId: finishedVideo.videoId
+                            }).then((url) => {
+                                window.open(url);
+                            })
+                        }}>
+                        Open in Obsidian
+                    </button>
+                </div>
             </>
         );
     }
